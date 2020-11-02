@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "594553741865",
+    "firebase_url": "https://note-and-count.firebaseio.com",
+    "project_id": "note-and-count",
+    "storage_bucket": "note-and-count.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:594553741865:android:04f04a5351d3251919b238",
+        "android_client_info": {
+          "package_name": "com.zivapp.notes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "594553741865-50j3tidfkuq2qfa2rn13cpcqg3f3rtgu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zivapp.notes",
+            "certificate_hash": "e00c2589f7be0eb3854eccaf4738d0748bd9373b"
+          }
+        },
+        {
+          "client_id": "594553741865-vii08649qf3eghq4s1prae548ctfpti1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJpVL5PbMhpMFcQYLja7ITnBZ9h8AjK8o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "594553741865-vii08649qf3eghq4s1prae548ctfpti1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
