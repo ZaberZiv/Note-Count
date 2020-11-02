@@ -5,7 +5,7 @@ import android.widget.EditText;
 
 import androidx.lifecycle.ViewModel;
 
-public class LoginViewModel {
+public class LoginPresenter {
 
     public boolean validateForm(EditText userEmail, EditText userPassword) {
         boolean valid = true;

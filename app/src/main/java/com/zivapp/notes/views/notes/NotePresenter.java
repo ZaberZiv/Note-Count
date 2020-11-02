@@ -168,7 +168,7 @@ public class NotePresenter {
                 mainMenuNote.setDate(Objects.requireNonNull(dataSnapshot.getValue(MainMenuNote.class)).getDate());
                 mainMenuNote.setId(Objects.requireNonNull(dataSnapshot.getValue(MainMenuNote.class)).getId());
 
-                setMainMenuNoteDataInLayout(mainMenuNote.getTitle());
+                setMainMenuNoteDataInLayout(mainMenuNote);
                 changeFocusIfTitleExist(mainMenuNote);
             }
 
@@ -181,6 +181,10 @@ public class NotePresenter {
         };
         reference.addValueEventListener(postListener);
         return mainMenuNote;
+    }
+
+    private void setMainMenuNoteDataInLayout(MainMenuNote mainMenuNote) {
+        mBinding.setMainNote(mainMenuNote);
     }
 
     /**
@@ -239,9 +243,8 @@ public class NotePresenter {
                 String name = editTextName.getText().toString().trim();
                 int price = Integer.parseInt(editTextPrice.getText().toString().trim());
                 mTotalSum = getTotalSum(mNoteList, price);
-                mTitleName = editTextTitleName.getText().toString().trim();
 
-                // Saving message in firebase
+                // saving message
                 saveNoteInFirebase(name, price, ID);
 
                 editTextName.getText().clear();
@@ -249,10 +252,6 @@ public class NotePresenter {
                 editTextName.requestFocus();
             }
         });
-    }
-
-    private void setMainMenuNoteDataInLayout(String title) {
-        mBinding.setMainNote(new MainMenuNote(title));
     }
 
     private void saveNoteInFirebase(String name, int price, String id) {

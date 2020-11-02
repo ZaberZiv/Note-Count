@@ -77,6 +77,7 @@ public class AdapterContacts extends RecyclerView.Adapter<AdapterContacts.ItemVi
         User user = list.get(position);
         holder.binding.setUser(user);
 
+        // pick a contact(s)
         holder.binding.userCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,6 +100,7 @@ public class AdapterContacts extends RecyclerView.Adapter<AdapterContacts.ItemVi
             }
         });
 
+        // open GroupNoteActivity
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -131,16 +133,13 @@ public class AdapterContacts extends RecyclerView.Adapter<AdapterContacts.ItemVi
 
         mGroupIDReference = reference.child("Groups").push();
         // add current user to the root
-        mGroupIDReference.child("users").child(user.getUid()).setValue(true);
+        mGroupIDReference.child("members").child(user.getUid()).setValue(true);
 
         mUserReference = reference.child("users").child(user.getUid()).child("Group");
         Log.v(TAG, "firebaseInstances() worked");
-
     }
 
     private DatabaseReference getReference(String uID) {
-        Log.v(TAG, "getReference() worked");
-
         return reference.child("users").child(uID).child("Group");
     }
 

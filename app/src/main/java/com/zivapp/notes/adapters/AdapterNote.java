@@ -13,12 +13,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.zivapp.notes.R;
 import com.zivapp.notes.databinding.ItemNotesBinding;
+import com.zivapp.notes.firebase.FirebaseHelper;
 import com.zivapp.notes.model.FormatSum;
 import com.zivapp.notes.model.Note;
 import com.zivapp.notes.util.UtilConverter;
@@ -69,10 +66,11 @@ public class AdapterNote extends RecyclerView.Adapter<AdapterNote.ItemViewHolder
         final Note note = list.get(position);
         holder.binding.setNote(note);
 
+        // Setting formate sum into recycler item
         String formated_sum = UtilConverter.customStringFormat(list.get(position).getSum());
         holder.binding.setFormat(new FormatSum(formated_sum));
 
-        // TODO: one click for change settings
+        // TODO: one click to change settings (name, sum)
         holder.binding.cardViewItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,7 +101,7 @@ public class AdapterNote extends RecyclerView.Adapter<AdapterNote.ItemViewHolder
             }
         });
 
-        // Removing item data from recyclerView and table (notes_table);
+        // Removing item data from RecyclerView and Firebase;
         holder.binding.cardViewItem.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -118,19 +116,11 @@ public class AdapterNote extends RecyclerView.Adapter<AdapterNote.ItemViewHolder
                                 Log.v(TAG, "REMOVING NOTE: " + list.get(position)
                                         + " Uid: " + list.get(position).getUid());
 
-//                                mRepoCreation.deleteNote(list.get(position));
-                                FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
-                                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-                                // TODO: add an message id to remove one item
-                                databaseReference.child("Notes")
-                                        .child(mUser.getUid())
-                                        .child(list.get(position).getId_note())
-                                        .child(list.get(position).getUid())
-                                        .removeValue();
+                                new FirebaseHelper().deleteNoteFromFirebase(list, position);
 
                                 list.remove(position);
                                 notifyItemRemoved(position);
-                                Toast.makeText(activity, R.string.task_toast, Toast.LENGTH_SHORT).show();
+                                showToast();
                             }
                         })
                         .setNegativeButton(R.string.task_negative_btn, null)
@@ -139,6 +129,10 @@ public class AdapterNote extends RecyclerView.Adapter<AdapterNote.ItemViewHolder
                 return false;
             }
         });
+    }
+
+    private void showToast() {
+        Toast.makeText(activity, R.string.task_toast, Toast.LENGTH_SHORT).show();
     }
 
     @Override

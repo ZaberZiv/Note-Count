@@ -19,18 +19,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.zivapp.notes.R;
 import com.zivapp.notes.model.GroupNote;
-import com.zivapp.notes.model.MainMenuNote;
-import com.zivapp.notes.model.Note;
 import com.zivapp.notes.databinding.ItemGroupNoteBinding;
 import com.zivapp.notes.model.FormatSum;
-import com.zivapp.notes.model.User;
 import com.zivapp.notes.util.UtilConverter;
-import com.zivapp.notes.util.UtilDate;
 import com.zivapp.notes.views.groupnotes.GroupNoteActivity;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Adapter used for the {@link GroupNoteActivity}.

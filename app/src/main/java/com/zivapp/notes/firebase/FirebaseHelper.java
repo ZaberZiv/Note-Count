@@ -4,6 +4,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.zivapp.notes.model.MainMenuNote;
+import com.zivapp.notes.model.Note;
+
+import java.util.ArrayList;
 
 public class FirebaseHelper {
     private static final String TAG = "FirebaseHelper";
@@ -12,12 +16,12 @@ public class FirebaseHelper {
         return FirebaseDatabase.getInstance();
     }
 
-    public FirebaseUser getFirebaseUser() {
-        return FirebaseAuth.getInstance().getCurrentUser();
-    }
-
     public DatabaseReference getDatabaseReference() {
         return getFirebaseDatabase().getReference();
+    }
+
+    public FirebaseUser getFirebaseUser() {
+        return FirebaseAuth.getInstance().getCurrentUser();
     }
 
     public DatabaseReference getNotesReference() {
@@ -34,5 +38,23 @@ public class FirebaseHelper {
 
     public DatabaseReference getUsersReference() {
         return getDatabaseReference().child("users");
+    }
+
+    // Removing data from Firebase in MenuNotesActivity
+    public void deleteMenuNoteFromFirebase(ArrayList<MainMenuNote> list, int position) {
+        getTotalDataReference()
+                .child(list.get(position).getId())
+                .removeValue();
+
+        getNotesReference()
+                .child(list.get(position).getId())
+                .removeValue();
+    }
+    // Removing data from Firebase in NoteActivity
+    public void deleteNoteFromFirebase(ArrayList<Note> list, int position) {
+        getNotesReference()
+                .child(list.get(position).getId_note())
+                .child(list.get(position).getUid())
+                .removeValue();
     }
 }

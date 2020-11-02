@@ -11,15 +11,14 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.zivapp.notes.R;
 import com.zivapp.notes.adapters.AdapterGroupItem;
+import com.zivapp.notes.firebase.FirebaseHelper;
 import com.zivapp.notes.model.GroupNote;
 import com.zivapp.notes.model.MainMenuNote;
 import com.zivapp.notes.model.Note;
@@ -36,26 +35,25 @@ public class GroupNoteActivity extends AppCompatActivity {
 
     private static final String TAG = "GroupNoteActivity";
 
+    private ArrayList<GroupNote> mNoteList = new ArrayList<>();
+    private MainMenuNote mMainMenuNote;
+    private User mUser;
+
     private ActivityGroupNoteBinding mBinding;
     private RecyclerView mRecyclerView;
     private AdapterGroupItem mAdapter;
 
+    private FirebaseHelper mFirebaseHelper;
     private DatabaseReference mGroupIDReference;
     private DatabaseReference mNotesReference;
     private DatabaseReference mTotalDataReference;
-    //    private DatabaseReference keyReference;
-//    private final ArrayList<String> keys = new ArrayList<>();
     private DatabaseReference mReference;
-    private User mUser;
     private DatabaseReference mUserReference;
 
     private String KEY;
-
     private String ID, mTitleName, mDate;
     private int mTotalSum;
     private boolean mFlag;
-    private ArrayList<GroupNote> mNoteList = new ArrayList<>();
-    private MainMenuNote mainMenuNote;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +62,7 @@ public class GroupNoteActivity extends AppCompatActivity {
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_group_note);
         mDate = UtilDate.getCurrentDate();
+        mFirebaseHelper = new FirebaseHelper();
 
         firebaseInstances();
         mUser = getUserFromFirebase(mUserReference);
@@ -89,13 +88,22 @@ public class GroupNoteActivity extends AppCompatActivity {
     }
 
     private void firebaseInstances() {
-        FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
-        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-        mReference = mDatabase.getReference();
+        mReference = mFirebaseHelper.getDatabaseReference();
+        FirebaseUser user = mFirebaseHelper.getFirebaseUser();
 
         // User
-        mUserReference = mReference.child("users").child(mUser.getUid());
-//        mUserReference.keepSynced(true);
+        mUserReference = mFirebaseHelper.getUsersReference().child(user.getUid());
+        mUserReference.keepSynced(true);
+    }
+
+    private void reference(String id) {
+        mGroupIDReference = mReference.child("Groups").child(id);
+        mNotesReference = mGroupIDReference.child("Notes");
+        mTotalDataReference = mGroupIDReference.child("Total Data");
+
+        mGroupIDReference.keepSynced(true);
+        mNotesReference.keepSynced(true);
+        mTotalDataReference.keepSynced(true);
     }
 
     /**
@@ -107,8 +115,6 @@ public class GroupNoteActivity extends AppCompatActivity {
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                noteList.clear();
-
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     GroupNote notes = new GroupNote();
                     notes.setUid(snapshot.getKey());
@@ -173,33 +179,17 @@ public class GroupNoteActivity extends AppCompatActivity {
         if (uID != null) {
             Log.v(TAG, "This note is already exist! ID: " + uID);
 
-            mGroupIDReference = mReference.child("Groups").child(uID);
-            mNotesReference = mGroupIDReference.child("Notes");
-            mTotalDataReference = mGroupIDReference.child("Total Data");
-
-//            mGroupIDReference.keepSynced(true);
-//            mNotesReference.keepSynced(true);
-//            mTotalDataReference.keepSynced(true);
-
+            reference(uID);
             mNoteList = getDataFromFirebase(mNotesReference);
-            mainMenuNote = getTotalDataFromFirebase(mTotalDataReference);
-
+            mMainMenuNote = getTotalDataFromFirebase(mTotalDataReference);
             mFlag = false;
+
         } else { // if not exist in database
             Log.v(TAG, "New Note!");
 
             uID = KEY;
-
-            mGroupIDReference = mReference.child("Groups").child(KEY);
-            mNotesReference = mGroupIDReference.child("Notes");
-            mTotalDataReference = mGroupIDReference.child("Total Data");
-
-//            mGroupIDReference.keepSynced(true);
-//            mNotesReference.keepSynced(true);
-//            mTotalDataReference.keepSynced(true);
-
+            reference(uID);
             mNoteList = getDataFromFirebase(mNotesReference);
-
             mFlag = true;
         }
         return uID;
@@ -219,6 +209,7 @@ public class GroupNoteActivity extends AppCompatActivity {
                 mainMenuNote.setTitle(dataSnapshot.getValue(MainMenuNote.class).getTitle());
                 mainMenuNote.setTotal_sum(dataSnapshot.getValue(MainMenuNote.class).getTotal_sum());
 
+                setMainMenuNoteDataInLayout(mainMenuNote);
                 changeFocusIfTitleExist(mainMenuNote);
             }
 
@@ -230,13 +221,11 @@ public class GroupNoteActivity extends AppCompatActivity {
             }
         };
         reference.addValueEventListener(postListener);
-        setMainMenuNoteDataInLayout(mainMenuNote.getTitle());
-
         return mainMenuNote;
     }
 
-    private void setMainMenuNoteDataInLayout(String title) {
-        mBinding.toolbar.setMainNote(new MainMenuNote(title));
+    private void setMainMenuNoteDataInLayout(MainMenuNote mainMenuNote) {
+        mBinding.toolbar.setMainNote(mainMenuNote);
     }
 
     private void setFormatSumDataInLayout(int totalSum) {
@@ -318,14 +307,18 @@ public class GroupNoteActivity extends AppCompatActivity {
                 mTotalSum = getTotalSum(mNoteList, price);
 
                 // Saving message
-                GroupNote gNote = new GroupNote(name, price, mUser.getName(), UtilDate.getGroupDate());
-                mNotesReference.push().setValue(gNote);
+                saveGroupNoteInFirebase(name, price);
 
                 editTextName.getText().clear();
                 editTextPrice.getText().clear();
                 editTextName.requestFocus();
             }
         });
+    }
+
+    private void saveGroupNoteInFirebase(String name, int price) {
+        GroupNote gNote = new GroupNote(name, price, mUser.getName(), UtilDate.getGroupDate());
+        mNotesReference.push().setValue(gNote);
     }
 
     @Override
@@ -369,7 +362,7 @@ public class GroupNoteActivity extends AppCompatActivity {
 //        mTitleName = mBinding.toolbar.etNoteTitleName.getText().toString().trim();
 
         // If title or total sum has changed than update data
-        if (!mainMenuNote.getTitle().equals(mTitleName) || mainMenuNote.getTotal_sum() != mTotalSum) {
+        if (!mMainMenuNote.getTitle().equals(mTitleName) || mMainMenuNote.getTotal_sum() != mTotalSum) {
             Log.v(TAG, "DATA UPDATED");
             Log.v(TAG, "updateMainMenuNoteData() *** DATE: " + mDate + "; Title: " + mTitleName + "; TotalSUm: " + mTotalSum + "; ID: " + ID);
 

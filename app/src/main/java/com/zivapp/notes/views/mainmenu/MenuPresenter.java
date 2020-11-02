@@ -42,6 +42,7 @@ public class MenuPresenter {
     private ActivityMenuNotesBinding mBinding;
     private RecyclerView mRecyclerView;
     private AdapterMenu mAdapter;
+
     private ArrayList<MainMenuNote> mArrayList = new ArrayList<>();
     private ArrayList<String> keys = new ArrayList<>();
 
@@ -98,7 +99,6 @@ public class MenuPresenter {
                 }
 
                 updateUI(mArrayList);
-
                 mBinding.setNote(new FormatSum(mArrayList.size()));
                 mBinding.progressBar.setVisibility(View.GONE);
             }
@@ -107,7 +107,6 @@ public class MenuPresenter {
             public void onCancelled(DatabaseError databaseError) {
                 // Getting Object failed, log a message
                 Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                showToast("Networking is OFF");
             }
         };
         reference.addValueEventListener(postListener);
@@ -123,8 +122,10 @@ public class MenuPresenter {
 
     public void loadGroupNotes() {
         for (String key : keys) {
-            Log.v(TAG, "String key: " + key);
+            Log.v(TAG, "loadGroupNotes(), key: " + key);
             mReferenceGroup = getTotalGroupRef(key);
+            mGroupsReference.keepSynced(true);
+            mReferenceGroup.keepSynced(true);
             getGroupsNotes(mReferenceGroup);
         }
     }
@@ -155,7 +156,6 @@ public class MenuPresenter {
             public void onCancelled(DatabaseError databaseError) {
                 // Getting Object failed, log a message
                 Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                showToast("Networking is OFF");
             }
         };
         reference.addValueEventListener(postListener);

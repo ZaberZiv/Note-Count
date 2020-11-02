@@ -14,12 +14,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.zivapp.notes.R;
 import com.zivapp.notes.databinding.ItemMainMenuBinding;
+import com.zivapp.notes.firebase.FirebaseHelper;
 import com.zivapp.notes.model.FormatSum;
 import com.zivapp.notes.model.MainMenuNote;
 import com.zivapp.notes.model.Note;
@@ -83,25 +80,26 @@ public class AdapterMenu extends RecyclerView.Adapter<AdapterMenu.NoteViewHolder
         String formated_total_sum = UtilConverter.customStringFormat(list.get(position).getTotal_sum());
         holder.binding.setFormat(new FormatSum(formated_total_sum));
 
-        // Opening CreationActivity and send ID
+        // Opening new Activity (group note or single note) and send ID
         holder.binding.cardViewNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.v(TAG, "Opening NoteActivity and send ID_note: " + list.get(position).getId());
 
                 if (list.get(position).isGroup()) {
-                    Intent intent = new Intent(context, GroupNoteActivity.class);
-                    intent.putExtra("id_note", list.get(position).getId());
-                    context.startActivity(intent);
+                    Log.v(TAG, "Opening GroupNoteActivity and send ID: "
+                            + list.get(position).getId());
+
+                    openNewActivity(GroupNoteActivity.class, list, position);
                 } else {
-                    Intent intent = new Intent(context, NoteActivity.class);
-                    intent.putExtra("id_note", list.get(position).getId());
-                    context.startActivity(intent);
+                    Log.v(TAG, "Opening NoteActivity and send ID: "
+                            + list.get(position).getId());
+
+                    openNewActivity(NoteActivity.class, list, position);
                 }
             }
         });
 
-        // Removing item data from recyclerView and both tables (notes_table and menu_table);
+        // Removing item data from RecyclerView and Firebase;
         holder.binding.cardViewNote.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -117,15 +115,13 @@ public class AdapterMenu extends RecyclerView.Adapter<AdapterMenu.NoteViewHolder
                                         + list.get(position).getTitle()
                                         + " ID_note: " + list.get(position).getId());
 
-                                FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
-                                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-                                databaseReference.child("Total Data").child(mUser.getUid()).child(list.get(position).getId()).removeValue();
-                                databaseReference.child("Notes").child(mUser.getUid()).child(list.get(position).getId()).removeValue();
+                                //TODO: find a way to delete a group note
+                               new FirebaseHelper().deleteMenuNoteFromFirebase(list, position);
 
                                 list.remove(position);
                                 notifyItemRemoved(position);
 
-                                Toast.makeText(context, R.string.note_toast, Toast.LENGTH_SHORT).show();
+                                showToast();
                             }
                         })
                         .setNegativeButton(R.string.note_negative_btn, null)
@@ -134,6 +130,16 @@ public class AdapterMenu extends RecyclerView.Adapter<AdapterMenu.NoteViewHolder
                 return false;
             }
         });
+    }
+
+    private void showToast() {
+        Toast.makeText(context, R.string.note_toast, Toast.LENGTH_SHORT).show();
+    }
+
+    private void openNewActivity(Class clazz, ArrayList<MainMenuNote> list, int position) {
+        Intent intent = new Intent(context, clazz);
+        intent.putExtra("id_note", list.get(position).getId());
+        context.startActivity(intent);
     }
 
     @Override

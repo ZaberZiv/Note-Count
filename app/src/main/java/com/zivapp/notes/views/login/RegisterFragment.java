@@ -13,7 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
+import com.zivapp.notes.views.login.LoginPresenter;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -34,7 +34,7 @@ public class RegisterFragment extends Fragment {
     private DatabaseReference mDatabase;
 
     private FragmentRegisterBinding mBinding;
-    private LoginViewModel mLoginViewModel;
+    private LoginPresenter mLoginPresenter;
 
     @Nullable
     @Override
@@ -43,7 +43,7 @@ public class RegisterFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        mLoginViewModel = new LoginViewModel();
+        mLoginPresenter = new LoginPresenter();
 
         editTextListener();
         setRegisterButton();
@@ -64,7 +64,7 @@ public class RegisterFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (mLoginViewModel.isPasswordConfirm(mBinding.password.getText().toString().trim(),
+                if (mLoginPresenter.isPasswordConfirm(mBinding.password.getText().toString().trim(),
                         mBinding.confirmPassword.getText().toString().trim())) {
 
                     mBinding.registerBtn.setEnabled(true);
@@ -87,7 +87,7 @@ public class RegisterFragment extends Fragment {
     }
 
     private void registerNewUser(String email, String password) {
-        if (!mLoginViewModel.validateForm(mBinding.usernameEmail, mBinding.password)) return;
+        if (!mLoginPresenter.validateForm(mBinding.usernameEmail, mBinding.password)) return;
 
         showProgressBar();
 

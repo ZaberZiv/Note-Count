@@ -12,16 +12,15 @@ import android.widget.EditText;
 
 import androidx.databinding.DataBindingUtil;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.zivapp.notes.R;
 import com.zivapp.notes.databinding.ActivityProfileBinding;
+import com.zivapp.notes.firebase.FirebaseHelper;
 import com.zivapp.notes.views.mainmenu.MenuNotesActivity;
 
 public class ProfilePresenter {
 
     private static final String TAG = "ProfilePresenter";
-    private DatabaseReference mDatabase;
+    private FirebaseHelper mFirebaseHelper;
     private ActivityProfileBinding mBinding;
     private EditText mEditTextUserName, mEditTextUserPhone;
     private Button mButtonConfirm;
@@ -30,7 +29,7 @@ public class ProfilePresenter {
     public ProfilePresenter(Activity activity) {
         mActivity = activity;
         mBinding = DataBindingUtil.setContentView(activity, R.layout.activity_profile);
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mFirebaseHelper = new FirebaseHelper();
 
         setViewsByBinding();
         editTextListener();
@@ -115,7 +114,7 @@ public class ProfilePresenter {
     }
 
     void writeNewUser(String userId, String name, String phone) {
-        mDatabase.child("users").child(userId).child("name").setValue(name);
-        mDatabase.child("users").child(userId).child("phone").setValue(phone);
+        mFirebaseHelper.getUsersReference().child(userId).child("name").setValue(name);
+        mFirebaseHelper.getUsersReference().child(userId).child("phone").setValue(phone);
     }
 }
