@@ -13,11 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.zivapp.notes.R;
 import com.zivapp.notes.adapters.AdapterMenu;
@@ -47,7 +45,6 @@ public class MenuPresenter {
     private ArrayList<String> keys = new ArrayList<>();
 
     private FirebaseHelper firebaseHelper;
-    private DatabaseReference mReferenceGroup;
     private DatabaseReference mGroupsReference;
 
     public MenuPresenter(final Context context, Activity activity) {
@@ -65,6 +62,7 @@ public class MenuPresenter {
 
     public void firebaseInstances() {
         mGroupsReference = firebaseHelper.getGroupsReference();
+        mGroupsReference.keepSynced(true);
 
         DatabaseReference mTotalDataReference = firebaseHelper.getTotalDataReference();
         mTotalDataReference.keepSynced(true);
@@ -74,10 +72,6 @@ public class MenuPresenter {
 
         getUserData(userGroupRef);
         getDataFromFirebase(mTotalDataReference);
-    }
-
-    private DatabaseReference getTotalGroupRef(String key) {
-        return mGroupsReference.child(key).child("Total Data");
     }
 
     public void getDataFromFirebase(DatabaseReference reference) {
@@ -111,23 +105,26 @@ public class MenuPresenter {
         };
         reference.addValueEventListener(postListener);
 
-//        return list;
         new Handler().postDelayed((new Runnable() {
             @Override
             public void run() {
                 loadGroupNotes();
             }
-        }), 1000);
+        }), 500);
     }
 
     public void loadGroupNotes() {
         for (String key : keys) {
             Log.v(TAG, "loadGroupNotes(), key: " + key);
-            mReferenceGroup = getTotalGroupRef(key);
-            mGroupsReference.keepSynced(true);
+
+            DatabaseReference mReferenceGroup = getTotalGroupRef(key);
             mReferenceGroup.keepSynced(true);
             getGroupsNotes(mReferenceGroup);
         }
+    }
+
+    private DatabaseReference getTotalGroupRef(String key) {
+        return mGroupsReference.child(key).child("Total Data");
     }
 
     public void getGroupsNotes(DatabaseReference reference) {

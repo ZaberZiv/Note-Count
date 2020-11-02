@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.os.Handler;
 import android.provider.ContactsContract;
 
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,12 +28,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.zivapp.notes.R;
 import com.zivapp.notes.adapters.AdapterContacts;
+import com.zivapp.notes.adapters.SelectedUsersListener;
 import com.zivapp.notes.databinding.ActivityContactsListBinding;
 import com.zivapp.notes.model.User;
 
 import java.util.ArrayList;
 
-public class ContactsListActivity extends AppCompatActivity {
+public class ContactsListActivity extends AppCompatActivity implements SelectedUsersListener {
     private static final String TAG = "ContactsListActivity";
 
     public static final int REQUEST_READ_CONTACTS = 79;
@@ -40,6 +43,10 @@ public class ContactsListActivity extends AppCompatActivity {
     private AdapterContacts mAdapter;
     private ArrayList<User> mContactsList = new ArrayList<>();
     private ArrayList<User> mFirebaseUsersList = new ArrayList<>();
+
+    private DatabaseReference mGroupIDReference;
+    private DatabaseReference mUserReference;
+    private DatabaseReference reference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +70,9 @@ public class ContactsListActivity extends AppCompatActivity {
             public void run() {
                 updateUI(findMatchedUsers(mContactsList, mFirebaseUsersList));
             }
-        }), 1000);
+        }), 500);
+
+        buttonSelectUsers();
     }
 
     private ArrayList<User> findMatchedUsers(ArrayList<User> contactsList, ArrayList<User> firebaseUsersList) {
@@ -83,11 +92,12 @@ public class ContactsListActivity extends AppCompatActivity {
         return listOfMatchedUsers;
     }
 
+    // TODO: refactor this method, add FirebaseHelper
     public void firebaseInstances() {
         FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
         DatabaseReference mReference = mDatabase.getReference();
         DatabaseReference mNotesIDReference = mReference.child("users");
-//        mNotesIDReference.keepSynced(true);
+        mNotesIDReference.keepSynced(true);
         mFirebaseUsersList = getDataFromFirebase(mNotesIDReference);
     }
 
@@ -208,17 +218,74 @@ public class ContactsListActivity extends AppCompatActivity {
                         StaggeredGridLayoutManager.VERTICAL)
         );
 
-        mAdapter = new AdapterContacts(list, this, mBinding.btnAdd);
+        mAdapter = new AdapterContacts(list, this, this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
     public void updateUI(ArrayList<User> list) {
         if (mAdapter == null) {
-            mAdapter = new AdapterContacts(list, this, mBinding.btnAdd);
+            mAdapter = new AdapterContacts(list, this, this);
             mRecyclerView.setAdapter(mAdapter);
         } else {
             mAdapter.setNoteList(list);
             mAdapter.notifyDataSetChanged();
         }
+    }
+
+    private void buttonSelectUsers() {
+        mBinding.btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                firebase();
+
+                ArrayList<User> listUsers = mAdapter.getSelectedUsers();
+
+                for (User user : listUsers) {
+                    mGroupIDReference.child("members").child(user.getId()).setValue(true);
+                    Log.v(TAG, "User: " + user.getName() + ", id: " + user.getId());
+
+                    getReference(user.getId()).child(mGroupIDReference.getKey()).setValue(true);
+                    Log.v(TAG, "KEY 1: " + mGroupIDReference.getKey());
+                }
+
+                String key = mGroupIDReference.getKey();
+                mUserReference.child(key).setValue(true);
+                openNewActivityWithData(key);
+            }
+        });
+    }
+
+    @Override
+    public void onSelectedAction(Boolean isSelected) {
+        if (isSelected) {
+            mBinding.btnAdd.setVisibility(View.VISIBLE);
+        } else {
+            mBinding.btnAdd.setVisibility(View.GONE);
+        }
+    }
+
+    private void openNewActivityWithData(String key) {
+        Intent intent = new Intent(this, GroupNoteActivity.class);
+        intent.putExtra("key", key);
+        startActivity(intent);
+    }
+
+    // TODO: rework with FirebaseHelper
+    private void firebase() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        reference = database.getReference();
+
+        mGroupIDReference = reference.child("Groups").push();
+        // add current user to the root
+        mGroupIDReference.child("members").child(user.getUid()).setValue(true);
+
+        mUserReference = reference.child("users").child(user.getUid()).child("Group");
+        Log.v(TAG, "firebaseInstances() worked");
+    }
+
+    private DatabaseReference getReference(String uID) {
+        return reference.child("users").child(uID).child("Group");
     }
 }

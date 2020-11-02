@@ -42,11 +42,12 @@ public class AdapterContacts extends RecyclerView.Adapter<AdapterContacts.ItemVi
     private DatabaseReference reference;
 
     private ArrayList<User> user_array = new ArrayList<>();
+    private SelectedUsersListener mSelectedUsersListener;
 
-    public AdapterContacts(ArrayList<User> list, Activity activity, Button button) {
+    public AdapterContacts(ArrayList<User> list, Activity activity, SelectedUsersListener selectedUsersListener) {
         this.list = list;
         this.activity = activity;
-        this.button = button;
+        mSelectedUsersListener = selectedUsersListener;
     }
 
     public void setNoteList(ArrayList<User> list) {
@@ -74,58 +75,95 @@ public class AdapterContacts extends RecyclerView.Adapter<AdapterContacts.ItemVi
 
     @Override
     public void onBindViewHolder(@NonNull final ItemViewHolder holder, final int position) {
-        User user = list.get(position);
+        final User user = list.get(position);
         holder.binding.setUser(user);
+
+        final ImageView pickContact = holder.binding.imagePicked;
+        if (user.isSelected()) {
+            pickContact.setVisibility(View.VISIBLE);
+        } else {
+            pickContact.setVisibility(View.GONE);
+        }
 
         // pick a contact(s)
         holder.binding.userCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ImageView pickContact = holder.binding.imagePicked;
-
-                if (!flag) {
-                    flag = true;
-                    pickContact.setVisibility(View.VISIBLE);
-                    user_array.add(position, list.get(position));
-                    Log.v(TAG, "Item selected: " + user_array.get(position).getPhone());
-                    Log.v(TAG, "Item Position: " + position);
-                    Log.v(TAG, "Array size: " + user_array.size());
-
-                } else {
-                    flag = false;
+                if (user.isSelected()) {
                     pickContact.setVisibility(View.GONE);
-                    Log.v(TAG, "Item removed: " + user_array.get(position).getPhone());
-                    user_array.remove(position);
+                    user.setSelected(false);
+//                    user_array.remove(position);
+                    if (getSelectedUsers().size() == 0) {
+                        mSelectedUsersListener.onSelectedAction(false);
+                    }
+                } else {
+                    pickContact.setVisibility(View.VISIBLE);
+                    user.setSelected(true);
+//                    user_array.add(position, list.get(position));
+                    mSelectedUsersListener.onSelectedAction(true);
                 }
+
+//                ImageView pickContact = holder.binding.imagePicked;
+
+//                if (!flag) {
+//                    flag = true;
+//                    pickContact.setVisibility(View.VISIBLE);
+//                    user_array.add(position, list.get(position));
+//                    Log.v(TAG, "Item selected: " + user_array.get(position).getPhone());
+//                    Log.v(TAG, "Item Position: " + position);
+//                    Log.v(TAG, "Array size: " + user_array.size());
+//
+//                } else {
+//                    flag = false;
+//                    pickContact.setVisibility(View.GONE);
+//                    Log.v(TAG, "Item removed: " + user_array.get(position).getPhone());
+//                    Log.v(TAG, "Item Position: " + position);
+//
+//                    user_array.remove(position);
+//                }
             }
         });
 
         // open GroupNoteActivity
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                firebaseInstances();
-
-                for (User user : user_array) {
-                    mGroupIDReference.child("users").child(user.getId()).setValue(true);
-                    Log.v(TAG, "User: " + user.getName() + ", id: " + user.getId());
-
-                    getReference(user.getId()).child(mGroupIDReference.getKey()).setValue(true);
-                    Log.v(TAG, "KEY 1: " + mGroupIDReference.getKey());
-                }
-
-                String key = mGroupIDReference.getKey();
-                mUserReference.child(key).setValue(true);
-
-                Intent intent = new Intent(activity, GroupNoteActivity.class);
-                intent.putParcelableArrayListExtra("array", user_array);
-                intent.putExtra("key", key);
-                activity.startActivity(intent);
-            }
-        });
+//        button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                firebaseInstances();
+//
+//                for (User user : user_array) {
+//                    mGroupIDReference.child("users").child(user.getId()).setValue(true);
+//                    Log.v(TAG, "User: " + user.getName() + ", id: " + user.getId());
+//
+//                    getReference(user.getId()).child(mGroupIDReference.getKey()).setValue(true);
+//                    Log.v(TAG, "KEY 1: " + mGroupIDReference.getKey());
+//                }
+//
+//                String key = mGroupIDReference.getKey();
+//                mUserReference.child(key).setValue(true);
+//                openNewActivityWithData(key);
+//            }
+//        });
     }
 
+    public ArrayList<User> getSelectedUsers() {
+        ArrayList<User> usersList = new ArrayList<>();
+        for (User user : list) {
+            if (user.isSelected()) {
+                usersList.add(user);
+            }
+        }
+        return usersList;
+    }
+
+    private void openNewActivityWithData(String key) {
+        Intent intent = new Intent(activity, GroupNoteActivity.class);
+//        intent.putParcelableArrayListExtra("array", user_array);
+        intent.putExtra("key", key);
+        activity.startActivity(intent);
+    }
+
+// TODO: rework with FirebaseHelper
     private void firebaseInstances() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseDatabase database = FirebaseDatabase.getInstance();

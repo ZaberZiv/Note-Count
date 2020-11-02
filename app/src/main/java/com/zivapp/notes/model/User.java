@@ -9,6 +9,7 @@ public class User implements Parcelable {
     private String email;
     private String phone;
     private String id;
+    private boolean selected;
 
     public User() {
     }
@@ -56,6 +57,14 @@ public class User implements Parcelable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 
     // Parcelable methods

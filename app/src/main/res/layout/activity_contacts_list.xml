@@ -10,12 +10,13 @@
 
         <Button
             android:id="@+id/btn_add"
-            android:layout_margin="16dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/btn_add" />
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="16dp"
+            android:text="@string/btn_add"
+            android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_contacts"

@@ -19,7 +19,7 @@
         android:layout_height="60dp"
         android:layout_margin="4dp"
         android:elevation="12dp"
-        app:cardBackgroundColor="@color/background_main"
+        app:cardBackgroundColor="@color/item_color"
         app:cardCornerRadius="16dp">
 
         <RelativeLayout
