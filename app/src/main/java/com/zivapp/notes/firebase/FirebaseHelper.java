@@ -12,6 +12,9 @@ import java.util.ArrayList;
 public class FirebaseHelper {
     private static final String TAG = "FirebaseHelper";
 
+    /**
+    * Base methods
+     */
     public FirebaseDatabase getFirebaseDatabase() {
         return FirebaseDatabase.getInstance();
     }
@@ -24,6 +27,9 @@ public class FirebaseHelper {
         return FirebaseAuth.getInstance().getCurrentUser();
     }
 
+    /**
+     * Branch methods
+     */
     public DatabaseReference getNotesReference() {
         return getDatabaseReference().child("Notes").child(getFirebaseUser().getUid());
     }
@@ -40,6 +46,9 @@ public class FirebaseHelper {
         return getDatabaseReference().child("users");
     }
 
+    /**
+     * Removing data methods
+     */
     // Removing data from Firebase in MenuNotesActivity
     public void deleteMenuNoteFromFirebase(ArrayList<MainMenuNote> list, int position) {
         getTotalDataReference()

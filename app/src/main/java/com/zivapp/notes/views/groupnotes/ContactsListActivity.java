@@ -218,7 +218,7 @@ public class ContactsListActivity extends AppCompatActivity implements SelectedU
                         StaggeredGridLayoutManager.VERTICAL)
         );
 
-        mAdapter = new AdapterContacts(list,  this);
+        mAdapter = new AdapterContacts(list, this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -256,21 +256,6 @@ public class ContactsListActivity extends AppCompatActivity implements SelectedU
         });
     }
 
-    @Override
-    public void onSelectedAction(Boolean isSelected) {
-        if (isSelected) {
-            mBinding.btnAdd.setVisibility(View.VISIBLE);
-        } else {
-            mBinding.btnAdd.setVisibility(View.GONE);
-        }
-    }
-
-    private void openNewActivityWithData(String key) {
-        Intent intent = new Intent(this, GroupNoteActivity.class);
-        intent.putExtra("key", key);
-        startActivity(intent);
-    }
-
     // TODO: rework with FirebaseHelper
     private void firebase() {
         FirebaseUser user = mFirebaseHelper.getFirebaseUser();
@@ -286,5 +271,21 @@ public class ContactsListActivity extends AppCompatActivity implements SelectedU
     // reference to added users
     private DatabaseReference getReferenceUserGroup(String uID) {
         return mFirebaseHelper.getUsersReference().child(uID).child("Group");
+    }
+
+    // realized in AdapterContacts
+    @Override
+    public void onSelectedAction(Boolean isSelected) {
+        if (isSelected) {
+            mBinding.btnAdd.setVisibility(View.VISIBLE);
+        } else {
+            mBinding.btnAdd.setVisibility(View.GONE);
+        }
+    }
+
+    private void openNewActivityWithData(String key) {
+        Intent intent = new Intent(this, GroupNoteActivity.class);
+        intent.putExtra("key", key);
+        startActivity(intent);
     }
 }

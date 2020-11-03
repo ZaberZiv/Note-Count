@@ -50,7 +50,6 @@ public class GroupNoteActivity extends AppCompatActivity {
     private DatabaseReference mReference;
     private DatabaseReference mUserReference;
 
-    private String KEY;
     private String ID, mTitleName, mDate;
     private int mTotalSum;
     private boolean mFlag;
@@ -66,19 +65,10 @@ public class GroupNoteActivity extends AppCompatActivity {
         firebaseInstances();
         mUser = getUserFromFirebase(mUserReference);
         loadRecyclerView(mNoteList);
-        getExtraData();
-
         ID = checkID();
+
         addNewNoteItem();
         setBackArrow();
-    }
-
-    private void getExtraData() {
-        Bundle arguments = getIntent().getExtras();
-
-        if (arguments != null) {
-            KEY = arguments.getString("key");
-        }
     }
 
     private void setBackArrow() {
@@ -186,12 +176,21 @@ public class GroupNoteActivity extends AppCompatActivity {
         } else { // if not exist in database
             Log.v(TAG, "New Note!");
 
-            uID = KEY;
+            uID = getExtraData();
             reference(uID);
             mNoteList = getDataFromFirebase(mNotesReference);
             mFlag = true;
         }
         return uID;
+    }
+
+    private String getExtraData() {
+        Bundle arguments = getIntent().getExtras();
+        String key = "";
+        if (arguments != null) {
+            key = arguments.getString("key");
+        }
+        return key;
     }
 
     /**
