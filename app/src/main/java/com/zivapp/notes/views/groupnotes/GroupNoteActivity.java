@@ -36,6 +36,8 @@ public class GroupNoteActivity extends AppCompatActivity {
     private static final String TAG = "GroupNoteActivity";
 
     private ArrayList<GroupNote> mNoteList = new ArrayList<>();
+    private ArrayList<User> mMembersList = new ArrayList<>();
+
     private MainMenuNote mMainMenuNote;
     private User mUser;
 
@@ -49,6 +51,7 @@ public class GroupNoteActivity extends AppCompatActivity {
     private DatabaseReference mTotalDataReference;
     private DatabaseReference mReference;
     private DatabaseReference mUserReference;
+    private DatabaseReference mMembersReference;
 
     private String ID, mTitleName, mDate;
     private int mTotalSum;
@@ -89,44 +92,11 @@ public class GroupNoteActivity extends AppCompatActivity {
         mGroupIDReference = mReference.child("Groups").child(id);
         mNotesReference = mGroupIDReference.child("Notes");
         mTotalDataReference = mGroupIDReference.child("Total Data");
+        mMembersReference = mGroupIDReference.child("members");
 
         mGroupIDReference.keepSynced(true);
         mNotesReference.keepSynced(true);
         mTotalDataReference.keepSynced(true);
-    }
-
-    /**
-     * Get all messages of this Note from firebase
-     */
-    private ArrayList<GroupNote> getDataFromFirebase(DatabaseReference reference) {
-        final ArrayList<GroupNote> noteList = new ArrayList<>();
-
-        ValueEventListener postListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    GroupNote notes = new GroupNote();
-                    notes.setUid(snapshot.getKey());
-                    notes.setMessage(snapshot.getValue(Note.class).getMessage());
-                    notes.setSum(snapshot.getValue(Note.class).getSum());
-                    notes.setMember(snapshot.getValue(GroupNote.class).getMember());
-                    notes.setDate(snapshot.getValue(GroupNote.class).getDate());
-                    noteList.add(notes);
-                }
-
-                mTotalSum = getTotalSum(noteList, 0);
-                updateUI(noteList);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                // ...
-            }
-        };
-        reference.addValueEventListener(postListener);
-        return noteList;
     }
 
     // User data
@@ -154,6 +124,33 @@ public class GroupNoteActivity extends AppCompatActivity {
         return user;
     }
 
+    // Members data
+    private ArrayList<User> getMembersFromFirebase(DatabaseReference reference) {
+        final ArrayList<User> list = new ArrayList<>();
+
+        ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                list.clear();
+                for (DataSnapshot snap : dataSnapshot.getChildren()) {
+                    User user = new User();
+                    user.setId(snap.getKey());
+                    list.add(user);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        };
+        reference.addValueEventListener(postListener);
+
+        return list;
+    }
+
     /**
      * Getting intent Extra ID from NotesActivity
      * and checking if there is note in database or not
@@ -171,6 +168,8 @@ public class GroupNoteActivity extends AppCompatActivity {
             reference(uID);
             mNoteList = getDataFromFirebase(mNotesReference);
             mMainMenuNote = getTotalDataFromFirebase(mTotalDataReference);
+            mMembersList = getMembersFromFirebase(mMembersReference);
+
             mFlag = false;
 
         } else { // if not exist in database
@@ -179,6 +178,8 @@ public class GroupNoteActivity extends AppCompatActivity {
             uID = getExtraData();
             reference(uID);
             mNoteList = getDataFromFirebase(mNotesReference);
+            mMembersList = getMembersFromFirebase(mMembersReference);
+
             mFlag = true;
         }
         return uID;
@@ -191,6 +192,42 @@ public class GroupNoteActivity extends AppCompatActivity {
             key = arguments.getString("key");
         }
         return key;
+    }
+
+    /**
+     * Get all messages of this Note from firebase
+     */
+    private ArrayList<GroupNote> getDataFromFirebase(DatabaseReference reference) {
+        final ArrayList<GroupNote> noteList = new ArrayList<>();
+
+        ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                noteList.clear();
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    GroupNote notes = new GroupNote();
+                    notes.setUid(snapshot.getKey());
+                    notes.setMessage(snapshot.getValue(Note.class).getMessage());
+                    notes.setSum(snapshot.getValue(Note.class).getSum());
+                    notes.setMember(snapshot.getValue(GroupNote.class).getMember());
+                    notes.setDate(snapshot.getValue(GroupNote.class).getDate());
+                    noteList.add(notes);
+                }
+
+                mTotalSum = getTotalSum(noteList, 0);
+                updateUI(noteList);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        };
+        reference.addValueEventListener(postListener);
+        return noteList;
     }
 
     /**
@@ -342,13 +379,24 @@ public class GroupNoteActivity extends AppCompatActivity {
 
         if (mTotalSum != 0) {
             Log.v(TAG, "DATA SAVED for the first time!");
-            Log.v(TAG, "saveMainMenuNoteData() *** DATE: " + mDate + "; Title: " + mTitleName + "; TotalSUm: " + mTotalSum + "; ID: " + ID);
+            Log.v(TAG, "saveMainMenuNoteData() *** DATE: " + mDate + "; Title: "
+                    + mTitleName + "; TotalSUm: " + mTotalSum + "; ID: " + ID);
 
-            MainMenuNote mainMenuNote = new MainMenuNote(mDate, mTitleName, mTotalSum, ID, true);
-            mTotalDataReference.setValue(mainMenuNote);
+            saveTotalData();
+
         } else {
             Log.v(TAG, "Empty note haven't saved!");
         }
+    }
+
+    private void saveTotalData() {
+        MainMenuNote mainMenuNote = new MainMenuNote(mDate, mTitleName, mTotalSum, ID, true);
+
+        for (User user : mMembersList) {
+            mFirebaseHelper.getTotalDataReference(user.getId()).child(ID).setValue(mainMenuNote);
+        }
+        mFirebaseHelper.getTotalDataReference().child(ID).setValue(mainMenuNote);
+        mTotalDataReference.setValue(mainMenuNote);
     }
 
     /**
@@ -358,12 +406,19 @@ public class GroupNoteActivity extends AppCompatActivity {
         Log.v(TAG, "updateMainMenuNoteData()");
 
         // If title or total sum has changed than update data
-        if (!mMainMenuNote.getTitle().equals(mTitleName) || mMainMenuNote.getTotal_sum() != mTotalSum) {
-            Log.v(TAG, "DATA UPDATED");
-            Log.v(TAG, "updateMainMenuNoteData() *** DATE: " + mDate + "; Title: " + mTitleName + "; TotalSUm: " + mTotalSum + "; ID: " + ID);
+        if (mMainMenuNote.getTitle() == null) {
+            Log.v(TAG, "mMainMenuNote is NULL");
 
-            MainMenuNote mainMenuNote = new MainMenuNote(mDate, mTitleName, mTotalSum, ID, true);
-            mTotalDataReference.setValue(mainMenuNote);
+            saveTotalData();
+
+        } else if (!mMainMenuNote.getTitle().equals(mTitleName)
+                || mMainMenuNote.getTotal_sum() != mTotalSum) {
+            Log.v(TAG, "DATA UPDATED");
+            Log.v(TAG, "updateMainMenuNoteData() *** DATE: " + mDate + "; Title: "
+                    + mTitleName + "; TotalSUm: " + mTotalSum + "; ID: " + ID);
+
+            saveTotalData();
+
         } else {
             Log.v(TAG, "Note haven't changed!");
         }

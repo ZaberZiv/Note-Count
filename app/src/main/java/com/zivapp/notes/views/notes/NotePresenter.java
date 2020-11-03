@@ -191,6 +191,7 @@ public class NotePresenter {
      * changing focus on EditText "Add name" if Title exist.
      */
     private void changeFocusIfTitleExist(MainMenuNote mainMenuNote) {
+        if (mainMenuNote.getTitle() == null) return;
         if (!mainMenuNote.getTitle().equals("")) mBinding.etNameOperation.requestFocus();
     }
 
@@ -285,6 +286,8 @@ public class NotePresenter {
     void saveMainMenuNoteData() {
         Log.v(TAG, "saveMainMenuNoteData()");
 
+        getTitleName();
+
         if (mTotalSum != 0) {
             Log.v(TAG, "DATA SAVED for the first time!");
             MainMenuNote mainMenuNote = new MainMenuNote(mDate, mTitleName, mTotalSum, ID,false);
@@ -300,10 +303,15 @@ public class NotePresenter {
     void updateMainMenuNoteData() {
         Log.v(TAG, "updateMainMenuNoteData()");
 
-        mTitleName = mBinding.etNoteTitleName.getText().toString().trim();
+        getTitleName();
 
         // If title or total sum has changed than update data
-        if (!mainMenuNote.getTitle().equals(mTitleName) || mainMenuNote.getTotal_sum() != mTotalSum) {
+        if (mainMenuNote.getTitle() == null) {
+            Log.v(TAG, "mainMenuNote is NULL");
+            MainMenuNote mainMenuNote = new MainMenuNote(mDate, mTitleName, mTotalSum, ID,false);
+            saveTotalData(ID, mainMenuNote);
+
+        } else if (!mainMenuNote.getTitle().equals(mTitleName) || mainMenuNote.getTotal_sum() != mTotalSum) {
             Log.v(TAG, "DATA UPDATED");
 
             MainMenuNote mainMenuNote = new MainMenuNote(mDate, mTitleName, mTotalSum, ID,false);
@@ -311,6 +319,14 @@ public class NotePresenter {
         } else {
             Log.v(TAG, "Note haven't changed!");
         }
+    }
+
+    public String getTitleName() {
+        return mTitleName = mBinding.etNoteTitleName.getText().toString().trim();
+    }
+
+    public void setTitleName(String mTitleName) {
+        this.mTitleName = mTitleName;
     }
 
     public boolean ismFlag() {

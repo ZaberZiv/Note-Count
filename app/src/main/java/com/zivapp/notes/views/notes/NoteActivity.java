@@ -35,7 +35,6 @@ public class NoteActivity extends AppCompatActivity {
 
         if (mNotePresenter.ismFlag()) {
             mNotePresenter.saveMainMenuNoteData();
-            mNotePresenter.setFlag(false);
         } else {
             mNotePresenter.updateMainMenuNoteData();
         }

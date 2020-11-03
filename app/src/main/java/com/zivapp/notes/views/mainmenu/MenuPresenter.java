@@ -67,7 +67,8 @@ public class MenuPresenter {
         DatabaseReference mTotalDataReference = firebaseHelper.getTotalDataReference();
         mTotalDataReference.keepSynced(true);
 
-        DatabaseReference userGroupRef = firebaseHelper.getUsersReference().child(firebaseHelper.getFirebaseUser().getUid()).child("Group");
+        DatabaseReference userGroupRef = firebaseHelper.getUsersReference()
+                .child(firebaseHelper.getFirebaseUser().getUid()).child("Group");
         userGroupRef.keepSynced(true);
 
         getUserData(userGroupRef);
@@ -84,10 +85,11 @@ public class MenuPresenter {
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     MainMenuNote mainMenuNote = new MainMenuNote();
-                    mainMenuNote.setTitle(Objects.requireNonNull(snapshot.getValue(MainMenuNote.class)).getTitle());
-                    mainMenuNote.setTotal_sum(Objects.requireNonNull(snapshot.getValue(MainMenuNote.class)).getTotal_sum());
-                    mainMenuNote.setDate(Objects.requireNonNull(snapshot.getValue(MainMenuNote.class)).getDate());
-                    mainMenuNote.setId(Objects.requireNonNull(snapshot.getValue(MainMenuNote.class)).getId());
+                    mainMenuNote.setTitle(snapshot.getValue(MainMenuNote.class).getTitle());
+                    mainMenuNote.setTotal_sum(snapshot.getValue(MainMenuNote.class).getTotal_sum());
+                    mainMenuNote.setDate(snapshot.getValue(MainMenuNote.class).getDate());
+                    mainMenuNote.setId(snapshot.getValue(MainMenuNote.class).getId());
+                    mainMenuNote.setGroup(snapshot.getValue(MainMenuNote.class).isGroup());
 
                     mArrayList.add(mainMenuNote);
                 }
@@ -119,7 +121,7 @@ public class MenuPresenter {
 
             DatabaseReference mReferenceGroup = getTotalGroupRef(key);
             mReferenceGroup.keepSynced(true);
-            getGroupsNotes(mReferenceGroup);
+//            getGroupsNotes(mReferenceGroup);
         }
     }
 
@@ -136,12 +138,11 @@ public class MenuPresenter {
                 Log.v(TAG, "getGroupsNotes works");
 
                 MainMenuNote mainMenuNote = new MainMenuNote();
-
-                mainMenuNote.setTitle(Objects.requireNonNull(dataSnapshot.getValue(MainMenuNote.class)).getTitle());
-                mainMenuNote.setTotal_sum(Objects.requireNonNull(dataSnapshot.getValue(MainMenuNote.class)).getTotal_sum());
-                mainMenuNote.setDate(Objects.requireNonNull(dataSnapshot.getValue(MainMenuNote.class)).getDate());
-                mainMenuNote.setId(Objects.requireNonNull(dataSnapshot.getValue(MainMenuNote.class)).getId());
-                mainMenuNote.setGroup(Objects.requireNonNull(dataSnapshot.getValue(MainMenuNote.class)).isGroup());
+                mainMenuNote.setTitle(dataSnapshot.getValue(MainMenuNote.class).getTitle());
+                mainMenuNote.setTotal_sum(dataSnapshot.getValue(MainMenuNote.class).getTotal_sum());
+                mainMenuNote.setDate(dataSnapshot.getValue(MainMenuNote.class).getDate());
+                mainMenuNote.setId(dataSnapshot.getValue(MainMenuNote.class).getId());
+                mainMenuNote.setGroup(dataSnapshot.getValue(MainMenuNote.class).isGroup());
                 mArrayList.add(mainMenuNote);
 
                 updateUI(mArrayList);
@@ -174,7 +175,6 @@ public class MenuPresenter {
             public void onCancelled(DatabaseError databaseError) {
                 // Getting Object failed, log a message
                 Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                showToast("Networking is OFF");
             }
         };
         reference.addValueEventListener(postListener);
@@ -237,10 +237,5 @@ public class MenuPresenter {
                 context.startActivity(intent);
             }
         });
-    }
-
-    public void showToast(String message) {
-        Toast.makeText(context,
-                message, Toast.LENGTH_SHORT).show();
     }
 }

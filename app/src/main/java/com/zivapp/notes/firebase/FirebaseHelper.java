@@ -34,9 +34,14 @@ public class FirebaseHelper {
         return getDatabaseReference().child("Notes").child(getFirebaseUser().getUid());
     }
 
+    public DatabaseReference getTotalDataReference(String id) {
+        return getDatabaseReference().child("Total Data").child(id);
+    }
+
     public DatabaseReference getTotalDataReference() {
         return getDatabaseReference().child("Total Data").child(getFirebaseUser().getUid());
     }
+
 
     public DatabaseReference getGroupsReference() {
         return getDatabaseReference().child("Groups");
@@ -51,7 +56,7 @@ public class FirebaseHelper {
      */
     // Removing data from Firebase in MenuNotesActivity
     public void deleteMenuNoteFromFirebase(ArrayList<MainMenuNote> list, int position) {
-        getTotalDataReference()
+        getTotalDataReference(getFirebaseUser().getUid())
                 .child(list.get(position).getId())
                 .removeValue();
 

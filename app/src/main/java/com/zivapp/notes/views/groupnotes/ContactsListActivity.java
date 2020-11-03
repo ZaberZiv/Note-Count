@@ -19,12 +19,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.zivapp.notes.R;
 import com.zivapp.notes.adapters.AdapterContacts;
@@ -39,16 +37,17 @@ public class ContactsListActivity extends AppCompatActivity implements SelectedU
     private static final String TAG = "ContactsListActivity";
 
     public static final int REQUEST_READ_CONTACTS = 79;
+
     private ActivityContactsListBinding mBinding;
     private RecyclerView mRecyclerView;
     private AdapterContacts mAdapter;
+
     private ArrayList<User> mContactsList = new ArrayList<>();
     private ArrayList<User> mFirebaseUsersList = new ArrayList<>();
 
     private FirebaseHelper mFirebaseHelper;
     private DatabaseReference mGroupIDReference;
     private DatabaseReference mUserReference;
-    private DatabaseReference reference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -245,11 +244,11 @@ public class ContactsListActivity extends AppCompatActivity implements SelectedU
                     mGroupIDReference.child("members").child(user.getId()).setValue(true);
                     Log.v(TAG, "User: " + user.getName() + ", id: " + user.getId());
 
-                    getReferenceUserGroup(user.getId()).child(mGroupIDReference.getKey()).setValue(true);
-                    Log.v(TAG, "mGroupIDReference KEY: " + mGroupIDReference.getKey());
+                    getReferenceUserGroup(user.getId()).child(getGroupKey()).setValue(true);
+                    Log.v(TAG, "mGroupIDReference KEY: " + getGroupKey());
                 }
 
-                String key = mGroupIDReference.getKey();
+                String key = getGroupKey();
                 mUserReference.child(key).setValue(true);
                 openNewActivityWithData(key);
             }
@@ -266,6 +265,10 @@ public class ContactsListActivity extends AppCompatActivity implements SelectedU
         // reference to current user
         mUserReference = getReferenceUserGroup(user.getUid());
         Log.v(TAG, "firebase() worked");
+    }
+
+    private String getGroupKey() {
+        return mGroupIDReference.getKey();
     }
 
     // reference to added users
