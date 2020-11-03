@@ -61,7 +61,6 @@ public class GroupNoteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_group_note);
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_group_note);
-        mDate = UtilDate.getCurrentDate();
         mFirebaseHelper = new FirebaseHelper();
 
         firebaseInstances();
@@ -302,12 +301,12 @@ public class GroupNoteActivity extends AppCompatActivity {
                     return;
                 }
 
-                String name = editTextName.getText().toString().trim();
+                String message = editTextName.getText().toString().trim();
                 int price = Integer.parseInt(editTextPrice.getText().toString().trim());
                 mTotalSum = getTotalSum(mNoteList, price);
 
                 // Saving message
-                saveGroupNoteInFirebase(name, price);
+                saveGroupNoteInFirebase(message, price);
 
                 editTextName.getText().clear();
                 editTextPrice.getText().clear();
@@ -316,8 +315,8 @@ public class GroupNoteActivity extends AppCompatActivity {
         });
     }
 
-    private void saveGroupNoteInFirebase(String name, int price) {
-        GroupNote gNote = new GroupNote(name, price, mUser.getName(), UtilDate.getGroupDate());
+    private void saveGroupNoteInFirebase(String message, int price) {
+        GroupNote gNote = new GroupNote(message, price, mUser.getName(), UtilDate.getGroupDate());
         mNotesReference.push().setValue(gNote);
     }
 
@@ -326,10 +325,10 @@ public class GroupNoteActivity extends AppCompatActivity {
         Log.v(TAG, "onDestroy()");
 
         mTitleName = mBinding.toolbar.etNoteTitleName.getText().toString().trim();
+        mDate = UtilDate.getCurrentDate();
 
         if (mFlag) {
             saveMainMenuNoteData();
-            mFlag = false;
         } else {
             updateMainMenuNoteData();
         }
@@ -358,8 +357,6 @@ public class GroupNoteActivity extends AppCompatActivity {
      */
     private void updateMainMenuNoteData() {
         Log.v(TAG, "updateMainMenuNoteData()");
-
-//        mTitleName = mBinding.toolbar.etNoteTitleName.getText().toString().trim();
 
         // If title or total sum has changed than update data
         if (!mMainMenuNote.getTitle().equals(mTitleName) || mMainMenuNote.getTotal_sum() != mTotalSum) {

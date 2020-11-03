@@ -1,27 +1,18 @@
 package com.zivapp.notes.adapters;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.zivapp.notes.R;
 import com.zivapp.notes.databinding.ItemContactsBinding;
 import com.zivapp.notes.model.User;
 import com.zivapp.notes.views.groupnotes.ContactsListActivity;
-import com.zivapp.notes.views.groupnotes.GroupNoteActivity;
 
 import java.util.ArrayList;
 
@@ -33,20 +24,10 @@ public class AdapterContacts extends RecyclerView.Adapter<AdapterContacts.ItemVi
     private static final String TAG = "AdapterContacts";
 
     private ArrayList<User> list;
-    private Activity activity;
-    private boolean flag;
-    private Button button;
-
-    private DatabaseReference mGroupIDReference;
-    private DatabaseReference mUserReference;
-    private DatabaseReference reference;
-
-    private ArrayList<User> user_array = new ArrayList<>();
     private SelectedUsersListener mSelectedUsersListener;
 
-    public AdapterContacts(ArrayList<User> list, Activity activity, SelectedUsersListener selectedUsersListener) {
+    public AdapterContacts(ArrayList<User> list, SelectedUsersListener selectedUsersListener) {
         this.list = list;
-        this.activity = activity;
         mSelectedUsersListener = selectedUsersListener;
     }
 
@@ -92,58 +73,16 @@ public class AdapterContacts extends RecyclerView.Adapter<AdapterContacts.ItemVi
                 if (user.isSelected()) {
                     pickContact.setVisibility(View.GONE);
                     user.setSelected(false);
-//                    user_array.remove(position);
                     if (getSelectedUsers().size() == 0) {
                         mSelectedUsersListener.onSelectedAction(false);
                     }
                 } else {
                     pickContact.setVisibility(View.VISIBLE);
                     user.setSelected(true);
-//                    user_array.add(position, list.get(position));
                     mSelectedUsersListener.onSelectedAction(true);
                 }
-
-//                ImageView pickContact = holder.binding.imagePicked;
-
-//                if (!flag) {
-//                    flag = true;
-//                    pickContact.setVisibility(View.VISIBLE);
-//                    user_array.add(position, list.get(position));
-//                    Log.v(TAG, "Item selected: " + user_array.get(position).getPhone());
-//                    Log.v(TAG, "Item Position: " + position);
-//                    Log.v(TAG, "Array size: " + user_array.size());
-//
-//                } else {
-//                    flag = false;
-//                    pickContact.setVisibility(View.GONE);
-//                    Log.v(TAG, "Item removed: " + user_array.get(position).getPhone());
-//                    Log.v(TAG, "Item Position: " + position);
-//
-//                    user_array.remove(position);
-//                }
             }
         });
-
-        // open GroupNoteActivity
-//        button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                firebaseInstances();
-//
-//                for (User user : user_array) {
-//                    mGroupIDReference.child("users").child(user.getId()).setValue(true);
-//                    Log.v(TAG, "User: " + user.getName() + ", id: " + user.getId());
-//
-//                    getReference(user.getId()).child(mGroupIDReference.getKey()).setValue(true);
-//                    Log.v(TAG, "KEY 1: " + mGroupIDReference.getKey());
-//                }
-//
-//                String key = mGroupIDReference.getKey();
-//                mUserReference.child(key).setValue(true);
-//                openNewActivityWithData(key);
-//            }
-//        });
     }
 
     public ArrayList<User> getSelectedUsers() {
@@ -154,31 +93,6 @@ public class AdapterContacts extends RecyclerView.Adapter<AdapterContacts.ItemVi
             }
         }
         return usersList;
-    }
-
-    private void openNewActivityWithData(String key) {
-        Intent intent = new Intent(activity, GroupNoteActivity.class);
-//        intent.putParcelableArrayListExtra("array", user_array);
-        intent.putExtra("key", key);
-        activity.startActivity(intent);
-    }
-
-// TODO: rework with FirebaseHelper
-    private void firebaseInstances() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        reference = database.getReference();
-
-        mGroupIDReference = reference.child("Groups").push();
-        // add current user to the root
-        mGroupIDReference.child("members").child(user.getUid()).setValue(true);
-
-        mUserReference = reference.child("users").child(user.getUid()).child("Group");
-        Log.v(TAG, "firebaseInstances() worked");
-    }
-
-    private DatabaseReference getReference(String uID) {
-        return reference.child("users").child(uID).child("Group");
     }
 
     @Override

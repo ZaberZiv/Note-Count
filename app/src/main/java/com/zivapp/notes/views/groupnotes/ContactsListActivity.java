@@ -30,6 +30,7 @@ import com.zivapp.notes.R;
 import com.zivapp.notes.adapters.AdapterContacts;
 import com.zivapp.notes.adapters.SelectedUsersListener;
 import com.zivapp.notes.databinding.ActivityContactsListBinding;
+import com.zivapp.notes.firebase.FirebaseHelper;
 import com.zivapp.notes.model.User;
 
 import java.util.ArrayList;
@@ -44,6 +45,7 @@ public class ContactsListActivity extends AppCompatActivity implements SelectedU
     private ArrayList<User> mContactsList = new ArrayList<>();
     private ArrayList<User> mFirebaseUsersList = new ArrayList<>();
 
+    private FirebaseHelper mFirebaseHelper;
     private DatabaseReference mGroupIDReference;
     private DatabaseReference mUserReference;
     private DatabaseReference reference;
@@ -94,11 +96,10 @@ public class ContactsListActivity extends AppCompatActivity implements SelectedU
 
     // TODO: refactor this method, add FirebaseHelper
     public void firebaseInstances() {
-        FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference mReference = mDatabase.getReference();
-        DatabaseReference mNotesIDReference = mReference.child("users");
-        mNotesIDReference.keepSynced(true);
-        mFirebaseUsersList = getDataFromFirebase(mNotesIDReference);
+        mFirebaseHelper = new FirebaseHelper();
+        DatabaseReference userReference = mFirebaseHelper.getUsersReference();
+        userReference.keepSynced(true);
+        mFirebaseUsersList = getDataFromFirebase(userReference);
     }
 
     public ArrayList<User> getDataFromFirebase(DatabaseReference reference) {
@@ -117,7 +118,6 @@ public class ContactsListActivity extends AppCompatActivity implements SelectedU
                     Log.v(TAG, "getDataFromFirebase ID: " + user.getId());
 
                     list.add(user);
-//                    updateUI(findMatchedUsers(mContactsList, list));
                 }
             }
 
@@ -218,13 +218,13 @@ public class ContactsListActivity extends AppCompatActivity implements SelectedU
                         StaggeredGridLayoutManager.VERTICAL)
         );
 
-        mAdapter = new AdapterContacts(list, this, this);
+        mAdapter = new AdapterContacts(list,  this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
     public void updateUI(ArrayList<User> list) {
         if (mAdapter == null) {
-            mAdapter = new AdapterContacts(list, this, this);
+            mAdapter = new AdapterContacts(list, this);
             mRecyclerView.setAdapter(mAdapter);
         } else {
             mAdapter.setNoteList(list);
@@ -238,15 +238,15 @@ public class ContactsListActivity extends AppCompatActivity implements SelectedU
             public void onClick(View v) {
 
                 firebase();
-
                 ArrayList<User> listUsers = mAdapter.getSelectedUsers();
 
+                // adding users to the Group -> members
                 for (User user : listUsers) {
                     mGroupIDReference.child("members").child(user.getId()).setValue(true);
                     Log.v(TAG, "User: " + user.getName() + ", id: " + user.getId());
 
-                    getReference(user.getId()).child(mGroupIDReference.getKey()).setValue(true);
-                    Log.v(TAG, "KEY 1: " + mGroupIDReference.getKey());
+                    getReferenceUserGroup(user.getId()).child(mGroupIDReference.getKey()).setValue(true);
+                    Log.v(TAG, "mGroupIDReference KEY: " + mGroupIDReference.getKey());
                 }
 
                 String key = mGroupIDReference.getKey();
@@ -273,19 +273,18 @@ public class ContactsListActivity extends AppCompatActivity implements SelectedU
 
     // TODO: rework with FirebaseHelper
     private void firebase() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        reference = database.getReference();
-
-        mGroupIDReference = reference.child("Groups").push();
-        // add current user to the root
+        FirebaseUser user = mFirebaseHelper.getFirebaseUser();
+        // Generate new id for Group
+        mGroupIDReference = mFirebaseHelper.getGroupsReference().push();
+        // add current user to the members root
         mGroupIDReference.child("members").child(user.getUid()).setValue(true);
-
-        mUserReference = reference.child("users").child(user.getUid()).child("Group");
-        Log.v(TAG, "firebaseInstances() worked");
+        // reference to current user
+        mUserReference = getReferenceUserGroup(user.getUid());
+        Log.v(TAG, "firebase() worked");
     }
 
-    private DatabaseReference getReference(String uID) {
-        return reference.child("users").child(uID).child("Group");
+    // reference to added users
+    private DatabaseReference getReferenceUserGroup(String uID) {
+        return mFirebaseHelper.getUsersReference().child(uID).child("Group");
     }
 }
