@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">Notes</string>
+
+    <string name="total_notes">Total notes:</string>
+    <string name="image_descr">Empty list of notes</string>
+    <string name="empty_list_text">There is nothing to show you. \n
+        Please add new note by pressing green circle button below.</string>
+    <string name="no_data">Please add both Sum and Name of operation</string>
+
+    <string name="hint_name">Note name</string>
+    <string name="hint_text">Add text</string>
+    <string name="hint_price">Add price</string>
+
+    <string name="btn_add">Add</string>
+
+    <string name="dialog_title">Edit data</string>
+    <string name="dialog_header">Type new data below</string>
+    <string name="dialog_hint_name">Add new name here</string>
+    <string name="dialog_hint_price">Add new sum here</string>
+
+    <string name="task_title">Deleting Task!</string>
+    <string name="task_message">You will lose all data of this task! Are you sure?</string>
+    <string name="task_positive_btn">Yes</string>
+    <string name="task_negative_btn">No</string>
+    <string name="task_toast">Task Deleted</string>
+
+    <string name="note_title">Deleting this Note!</string>
+    <string name="note_message">You will lose all data in that Note! Are you sure?</string>
+    <string name="note_positive_btn">Yes</string>
+    <string name="note_negative_btn">No</string>
+    <string name="note_toast">Note Deleted</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_confirm_password">Confirm Password</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome!"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+</resources>
