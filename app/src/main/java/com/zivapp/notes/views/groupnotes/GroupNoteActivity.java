@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -87,7 +86,7 @@ public class GroupNoteActivity extends AppCompatActivity {
     private void references(String id) {
         mNotesReference = mFirebaseHelper.getGroupNoteReference(id);
         mTotalDataReference = mFirebaseHelper.getGroupTotalDataReference(id);
-        mMembersReference = mFirebaseHelper.getGroupMembersReference(id);
+        mMembersReference = mFirebaseHelper.getGroupMembersDataReference(id);
 
         mNotesReference.keepSynced(true);
         mTotalDataReference.keepSynced(true);
@@ -119,33 +118,6 @@ public class GroupNoteActivity extends AppCompatActivity {
         return user;
     }
 
-    // Members data
-    private ArrayList<User> getMembersFromFirebase(DatabaseReference reference) {
-        final ArrayList<User> list = new ArrayList<>();
-
-        ValueEventListener postListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                list.clear();
-                for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                    User user = new User();
-                    user.setId(snap.getKey());
-                    list.add(user);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                // ...
-            }
-        };
-        reference.addValueEventListener(postListener);
-
-        return list;
-    }
-
     /**
      * Getting intent Extra ID from NotesActivity
      * and checking if there is note in database or not
@@ -164,7 +136,6 @@ public class GroupNoteActivity extends AppCompatActivity {
             mNoteList = getDataFromFirebase(mNotesReference);
             mMainMenuNote = getTotalDataFromFirebase(mTotalDataReference);
             mMembersList = getMembersFromFirebase(mMembersReference);
-
             mFlag = false;
 
         } else { // if not exist in database
@@ -174,7 +145,6 @@ public class GroupNoteActivity extends AppCompatActivity {
             references(uID);
             mNoteList = getDataFromFirebase(mNotesReference);
             mMembersList = getMembersFromFirebase(mMembersReference);
-
             mFlag = true;
         }
         return uID;
@@ -260,6 +230,35 @@ public class GroupNoteActivity extends AppCompatActivity {
 
     private void setFormatSumDataInLayout(int totalSum) {
         mBinding.toolbar.setFormat(new FormatSum(UtilConverter.customStringFormat(totalSum)));
+    }
+
+    /**
+     * Get members (key) of this Group Note from firebase
+     */
+    private ArrayList<User> getMembersFromFirebase(DatabaseReference reference) {
+        final ArrayList<User> list = new ArrayList<>();
+
+        ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                list.clear();
+                for (DataSnapshot snap : dataSnapshot.getChildren()) {
+                    User user = new User();
+                    user.setId(snap.getKey());
+                    list.add(user);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        };
+        reference.addValueEventListener(postListener);
+
+        return list;
     }
 
     /**
@@ -389,7 +388,8 @@ public class GroupNoteActivity extends AppCompatActivity {
 
         // Saving data of members to the branch "Total Data" -> member id -> note id -> data
         for (User user : mMembersList) {
-            mFirebaseHelper.saveTotalDataMembers(user.getId(),ID, mainMenuNote);
+            mFirebaseHelper.saveTotalDataMembers(user.getId(), ID, mainMenuNote);
+            Log.v(TAG, "user.getId(): " + user.getId() + ", ID: " + ID);
         }
         // Saving data of current user to the branch "Total Data" -> note id -> data
         mFirebaseHelper.saveTotalDataCurrentUser(ID, mainMenuNote);

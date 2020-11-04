@@ -56,14 +56,8 @@ public class ContactsListActivity extends AppCompatActivity implements SelectedU
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_contacts_list);
 
-        if (ActivityCompat.checkSelfPermission(this,
-                android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-            mContactsList = getAllContacts();
-        } else {
-            requestPermission();
-        }
+        checkPermission();
         loadRecyclerView(mFirebaseUsersList);
-
         firebaseInstances();
 
         new Handler().postDelayed((new Runnable() {
@@ -74,6 +68,15 @@ public class ContactsListActivity extends AppCompatActivity implements SelectedU
         }), 500);
 
         buttonSelectUsers();
+    }
+
+    private void checkPermission() {
+        if (ActivityCompat.checkSelfPermission(this,
+                android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+            mContactsList = getAllContacts();
+        } else {
+            requestPermission();
+        }
     }
 
     private ArrayList<User> findMatchedUsers(ArrayList<User> contactsList, ArrayList<User> firebaseUsersList) {
@@ -113,16 +116,13 @@ public class ContactsListActivity extends AppCompatActivity implements SelectedU
                     user.setPhone(snap.getValue(User.class).getPhone());
                     user.setEmail(snap.getValue(User.class).getEmail());
                     user.setId(snap.getKey());
-                    Log.v(TAG, "getDataFromFirebase Phone: " + user.getPhone());
-                    Log.v(TAG, "getDataFromFirebase ID: " + user.getId());
-
                     list.add(user);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.w(TAG, "loadPost:onCancelled", error.toException());
             }
         });
 

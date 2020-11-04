@@ -72,7 +72,7 @@ public class NotePresenter {
         mFirebaseHelper = new FirebaseHelper();
 
         mNotesIDReference = mFirebaseHelper.getNotesReference();
-        mTotalDataReference = mFirebaseHelper.getTotalDataReference();
+        mTotalDataReference = mFirebaseHelper.getTotalDataRefCurrentUser();
 
         mNotesIDReference.keepSynced(true);
         mTotalDataReference.keepSynced(true);
@@ -135,9 +135,9 @@ public class NotePresenter {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Note notes = new Note();
                     notes.setUid(snapshot.getKey());
-                    notes.setMessage(Objects.requireNonNull(snapshot.getValue(Note.class)).getMessage());
-                    notes.setSum(Objects.requireNonNull(snapshot.getValue(Note.class)).getSum());
-                    notes.setId_note(Objects.requireNonNull(snapshot.getValue(Note.class)).getId_note());
+                    notes.setMessage(snapshot.getValue(Note.class).getMessage());
+                    notes.setSum(snapshot.getValue(Note.class).getSum());
+                    notes.setId_note(snapshot.getValue(Note.class).getId_note());
                     noteList.add(notes);
                 }
                 mTotalSum = getTotalSum(noteList, 0);
@@ -164,10 +164,10 @@ public class NotePresenter {
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                mainMenuNote.setTitle(Objects.requireNonNull(dataSnapshot.getValue(MainMenuNote.class)).getTitle());
-                mainMenuNote.setTotal_sum(Objects.requireNonNull(dataSnapshot.getValue(MainMenuNote.class)).getTotal_sum());
-                mainMenuNote.setDate(Objects.requireNonNull(dataSnapshot.getValue(MainMenuNote.class)).getDate());
-                mainMenuNote.setId(Objects.requireNonNull(dataSnapshot.getValue(MainMenuNote.class)).getId());
+                mainMenuNote.setTitle(dataSnapshot.getValue(MainMenuNote.class).getTitle());
+                mainMenuNote.setTotal_sum(dataSnapshot.getValue(MainMenuNote.class).getTotal_sum());
+                mainMenuNote.setDate(dataSnapshot.getValue(MainMenuNote.class).getDate());
+                mainMenuNote.setId(dataSnapshot.getValue(MainMenuNote.class).getId());
 
                 setMainMenuNoteDataInLayout(mainMenuNote);
                 changeFocusIfTitleExist(mainMenuNote);
@@ -292,14 +292,18 @@ public class NotePresenter {
         if (mTotalSum != 0) {
             Log.v(TAG, "DATA SAVED for the first time!");
             saveData();
-
         } else {
             Log.v(TAG, "Empty note haven't saved!");
         }
     }
 
     private void saveData() {
-        MainMenuNote mainMenuNote = new MainMenuNote(mDate, mTitleName, mTotalSum, ID,false);
+        MainMenuNote mainMenuNote = new MainMenuNote();
+        mainMenuNote.setDate(mDate);
+        mainMenuNote.setTitle(mTitleName);
+        mainMenuNote.setTotal_sum(mTotalSum);
+        mainMenuNote.setId(ID);
+        mainMenuNote.setGroup(false);
         saveTotalData(ID, mainMenuNote);
     }
 
