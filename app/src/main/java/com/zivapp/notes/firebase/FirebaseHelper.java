@@ -145,4 +145,20 @@ public class FirebaseHelper {
                 .child(list.get(position).getUid())
                 .removeValue();
     }
+    // Removing Group data from Firebase in MenuNotesActivity
+    public void deleteGroupNoteFromFirebase(ArrayList<MainMenuNote> list, int position) {
+        getTotalDataRefCurrentUser()
+                .child(list.get(position).getId())
+                .removeValue();
+
+        getCurrentUserReferenceByID()
+                .child(GROUP)
+                .child(list.get(position).getId())
+                .removeValue();
+
+        getGroupReferenceByID(list.get(position).getId())
+                .child(MEMBERS)
+                .child(getFirebaseUser().getUid())
+                .removeValue();
+    }
 }

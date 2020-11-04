@@ -51,8 +51,8 @@ public class MenuPresenter {
     }
 
     public void firebaseInstances() {
-        FirebaseHelper mFirebaseHelper = new FirebaseHelper();
-        DatabaseReference totalDataReference = mFirebaseHelper.getTotalDataRefCurrentUser();
+        FirebaseHelper firebaseHelper = new FirebaseHelper();
+        DatabaseReference totalDataReference = firebaseHelper.getTotalDataRefCurrentUser();
         totalDataReference.keepSynced(true);
         getDataFromFirebase(totalDataReference);
     }

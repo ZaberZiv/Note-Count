@@ -115,12 +115,12 @@ public class AdapterMenu extends RecyclerView.Adapter<AdapterMenu.NoteViewHolder
                                         + list.get(position).getTitle()
                                         + " ID_note: " + list.get(position).getId());
 
-                                //TODO: find a way to delete a group note
-                               new FirebaseHelper().deleteMenuNoteFromFirebase(list, position);
+                                FirebaseHelper firebaseHelper = new FirebaseHelper();
+                                firebaseHelper.deleteMenuNoteFromFirebase(list, position);
+                                firebaseHelper.deleteGroupNoteFromFirebase(list, position);
 
                                 list.remove(position);
                                 notifyItemRemoved(position);
-
                                 showToast();
                             }
                         })
