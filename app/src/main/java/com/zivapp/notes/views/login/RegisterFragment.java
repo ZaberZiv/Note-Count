@@ -13,15 +13,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import com.zivapp.notes.views.login.LoginPresenter;
+
+import com.zivapp.notes.firebase.FirebaseHelper;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.zivapp.notes.databinding.FragmentRegisterBinding;
 import com.zivapp.notes.model.User;
 import com.zivapp.notes.views.userinfo.ProfileActivity;
@@ -30,19 +28,15 @@ public class RegisterFragment extends Fragment {
 
     private static final String TAG = "RegisterFragment";
 
-    private FirebaseAuth mAuth;
-    private DatabaseReference mDatabase;
-
     private FragmentRegisterBinding mBinding;
+    private FirebaseHelper mFirebaseHelper;
     private LoginPresenter mLoginPresenter;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentRegisterBinding.inflate(inflater, container, false);
-        mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-
+        mFirebaseHelper = new FirebaseHelper();
         mLoginPresenter = new LoginPresenter();
 
         editTextListener();
@@ -91,14 +85,14 @@ public class RegisterFragment extends Fragment {
 
         showProgressBar();
 
-        mAuth.createUserWithEmailAndPassword(email, password)
+        mFirebaseHelper.getFirebaseAuth().createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.v(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
+                            FirebaseUser user = mFirebaseHelper.getFirebaseUser();
                             updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -137,7 +131,6 @@ public class RegisterFragment extends Fragment {
     }
 
     private void writeNewUser(String userId, String email) {
-        User user = new User("", email, "");
-        mDatabase.child("users").child(userId).setValue(user);
+        mFirebaseHelper.getUserEmailReference(userId).setValue(email);
     }
 }

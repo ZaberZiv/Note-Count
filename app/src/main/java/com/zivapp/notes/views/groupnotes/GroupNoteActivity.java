@@ -46,10 +46,8 @@ public class GroupNoteActivity extends AppCompatActivity {
     private AdapterGroupItem mAdapter;
 
     private FirebaseHelper mFirebaseHelper;
-    private DatabaseReference mGroupIDReference;
     private DatabaseReference mNotesReference;
     private DatabaseReference mTotalDataReference;
-    private DatabaseReference mReference;
     private DatabaseReference mUserReference;
     private DatabaseReference mMembersReference;
 
@@ -63,7 +61,6 @@ public class GroupNoteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_group_note);
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_group_note);
-        mFirebaseHelper = new FirebaseHelper();
 
         firebaseInstances();
         mUser = getUserFromFirebase(mUserReference);
@@ -80,23 +77,21 @@ public class GroupNoteActivity extends AppCompatActivity {
     }
 
     private void firebaseInstances() {
-        mReference = mFirebaseHelper.getDatabaseReference();
-        FirebaseUser user = mFirebaseHelper.getFirebaseUser();
+        mFirebaseHelper = new FirebaseHelper();
 
-        // User
-        mUserReference = mFirebaseHelper.getUsersReference().child(user.getUid());
+        // Current User reference
+        mUserReference = mFirebaseHelper.getCurrentUserReferenceByID();
         mUserReference.keepSynced(true);
     }
 
-    private void reference(String id) {
-        mGroupIDReference = mReference.child("Groups").child(id);
-        mNotesReference = mGroupIDReference.child("Notes");
-        mTotalDataReference = mGroupIDReference.child("Total Data");
-        mMembersReference = mGroupIDReference.child("members");
+    private void references(String id) {
+        mNotesReference = mFirebaseHelper.getGroupNoteReference(id);
+        mTotalDataReference = mFirebaseHelper.getGroupTotalDataReference(id);
+        mMembersReference = mFirebaseHelper.getGroupMembersReference(id);
 
-        mGroupIDReference.keepSynced(true);
         mNotesReference.keepSynced(true);
         mTotalDataReference.keepSynced(true);
+        mMembersReference.keepSynced(true);
     }
 
     // User data
@@ -165,7 +160,7 @@ public class GroupNoteActivity extends AppCompatActivity {
         if (uID != null) {
             Log.v(TAG, "This note is already exist! ID: " + uID);
 
-            reference(uID);
+            references(uID);
             mNoteList = getDataFromFirebase(mNotesReference);
             mMainMenuNote = getTotalDataFromFirebase(mTotalDataReference);
             mMembersList = getMembersFromFirebase(mMembersReference);
@@ -176,7 +171,7 @@ public class GroupNoteActivity extends AppCompatActivity {
             Log.v(TAG, "New Note!");
 
             uID = getExtraData();
-            reference(uID);
+            references(uID);
             mNoteList = getDataFromFirebase(mNotesReference);
             mMembersList = getMembersFromFirebase(mMembersReference);
 
@@ -392,10 +387,14 @@ public class GroupNoteActivity extends AppCompatActivity {
     private void saveTotalData() {
         MainMenuNote mainMenuNote = new MainMenuNote(mDate, mTitleName, mTotalSum, ID, true);
 
+        // Saving data of members to the branch "Total Data" -> member id -> note id -> data
         for (User user : mMembersList) {
-            mFirebaseHelper.getTotalDataReference(user.getId()).child(ID).setValue(mainMenuNote);
+            mFirebaseHelper.saveTotalDataMembers(user.getId(),ID, mainMenuNote);
         }
-        mFirebaseHelper.getTotalDataReference().child(ID).setValue(mainMenuNote);
+        // Saving data of current user to the branch "Total Data" -> note id -> data
+        mFirebaseHelper.saveTotalDataCurrentUser(ID, mainMenuNote);
+
+        // Saving data to the current "Groups" -> "Total Data"
         mTotalDataReference.setValue(mainMenuNote);
     }
 

@@ -239,29 +239,32 @@ public class ContactsListActivity extends AppCompatActivity implements SelectedU
                 firebase();
                 ArrayList<User> listUsers = mAdapter.getSelectedUsers();
 
-                // adding users to the Group -> members
+                // this cycle is for adding data to other members roots
                 for (User user : listUsers) {
-                    mGroupIDReference.child("members").child(user.getId()).setValue(true);
+                    // adding users to the Group | "Groups" -> group id -> "members" -> member uID -> value (true)
+                    mFirebaseHelper.getGroupMembersReference(mGroupIDReference, user.getId()).setValue(true);
                     Log.v(TAG, "User: " + user.getName() + ", id: " + user.getId());
-
+                    // adding group key to the members
+                    // "users" -> member uID -> "Group" -> group key -> value (true)
                     getReferenceUserGroup(user.getId()).child(getGroupKey()).setValue(true);
                     Log.v(TAG, "mGroupIDReference KEY: " + getGroupKey());
                 }
 
                 String key = getGroupKey();
+                // adding group key to the current user
+                // "users" -> user uID -> "Group" -> group key -> value (true)
                 mUserReference.child(key).setValue(true);
                 openNewActivityWithData(key);
             }
         });
     }
 
-    // TODO: rework with FirebaseHelper
     private void firebase() {
         FirebaseUser user = mFirebaseHelper.getFirebaseUser();
-        // Generate new id for Group
+        // Generate new key for Group
         mGroupIDReference = mFirebaseHelper.getGroupsReference().push();
-        // add current user to the members root
-        mGroupIDReference.child("members").child(user.getUid()).setValue(true);
+        // add current user to the members root | "Groups" -> group id -> "members" -> user uID -> value (true)
+        mFirebaseHelper.getGroupMembersReference(mGroupIDReference, user.getUid()).setValue(true);
         // reference to current user
         mUserReference = getReferenceUserGroup(user.getUid());
         Log.v(TAG, "firebase() worked");
@@ -271,9 +274,9 @@ public class ContactsListActivity extends AppCompatActivity implements SelectedU
         return mGroupIDReference.getKey();
     }
 
-    // reference to added users
+    // "users" -> user uID -> "Group"
     private DatabaseReference getReferenceUserGroup(String uID) {
-        return mFirebaseHelper.getUsersReference().child(uID).child("Group");
+        return mFirebaseHelper.getUsersGroupReference(uID);
     }
 
     // realized in AdapterContacts

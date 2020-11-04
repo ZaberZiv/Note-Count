@@ -10,25 +10,25 @@ import android.util.Log;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.zivapp.notes.R;
+import com.zivapp.notes.firebase.FirebaseHelper;
 import com.zivapp.notes.views.login.LoginActivity;
 import com.zivapp.notes.views.mainmenu.MenuNotesActivity;
 
 public class SplashScreenActivity extends AppCompatActivity {
     private static final String TAG = "SplashScreenActivity";
     private final int SPLASH_DISPLAY_LENGTH = 1000;
-    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-        mAuth = FirebaseAuth.getInstance();
+        final FirebaseHelper firebaseHelper = new FirebaseHelper();
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                FirebaseUser currentUser = mAuth.getCurrentUser();
+                FirebaseUser currentUser = firebaseHelper.getFirebaseUser();
                 updateUI(currentUser);
             }
         }, SPLASH_DISPLAY_LENGTH);

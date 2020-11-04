@@ -15,24 +15,23 @@ import androidx.fragment.app.Fragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.zivapp.notes.databinding.FragmentLoginBinding;
+import com.zivapp.notes.firebase.FirebaseHelper;
 import com.zivapp.notes.views.mainmenu.MenuNotesActivity;
-import com.zivapp.notes.views.login.LoginPresenter;
 
 public class LoginFragment extends Fragment {
 
     private static final String TAG = "LoginFragment";
-    private FirebaseAuth mAuth;
     private FragmentLoginBinding mBinding;
+    private FirebaseHelper mFirebaseHelper;
     private LoginPresenter mLoginPresenter;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentLoginBinding.inflate(inflater, container, false);
-        mAuth = FirebaseAuth.getInstance();
+        mFirebaseHelper = new FirebaseHelper();
         mLoginPresenter = new LoginPresenter();
 
         setSignInButton();
@@ -54,14 +53,14 @@ public class LoginFragment extends Fragment {
 
         showProgressBar();
 
-        mAuth.signInWithEmailAndPassword(email, password)
+        mFirebaseHelper.getFirebaseAuth().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
+                            FirebaseUser user = mFirebaseHelper.getFirebaseUser();
                             updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -42,16 +43,15 @@ public class MenuPresenter {
     private AdapterMenu mAdapter;
 
     private ArrayList<MainMenuNote> mArrayList = new ArrayList<>();
-    private ArrayList<String> keys = new ArrayList<>();
+//    private ArrayList<String> keys = new ArrayList<>();
 
-    private FirebaseHelper firebaseHelper;
-    private DatabaseReference mGroupsReference;
+    private FirebaseHelper mFirebaseHelper;
+//    private DatabaseReference mGroupsReference;
 
     public MenuPresenter(final Context context, Activity activity) {
         this.context = context;
 
         mBinding = DataBindingUtil.setContentView(activity, R.layout.activity_menu_notes);
-        firebaseHelper = new FirebaseHelper();
 
         loadRecyclerView(mArrayList);
         firebaseInstances();
@@ -61,18 +61,20 @@ public class MenuPresenter {
     }
 
     public void firebaseInstances() {
-        mGroupsReference = firebaseHelper.getGroupsReference();
-        mGroupsReference.keepSynced(true);
+        mFirebaseHelper = new FirebaseHelper();
+//        FirebaseUser user = mFirebaseHelper.getFirebaseUser();
 
-        DatabaseReference mTotalDataReference = firebaseHelper.getTotalDataReference();
-        mTotalDataReference.keepSynced(true);
+//        mGroupsReference = mFirebaseHelper.getGroupsReference();
+//        mGroupsReference.keepSynced(true);
 
-        DatabaseReference userGroupRef = firebaseHelper.getUsersReference()
-                .child(firebaseHelper.getFirebaseUser().getUid()).child("Group");
-        userGroupRef.keepSynced(true);
+        DatabaseReference totalDataReference = mFirebaseHelper.getTotalDataReference();
+        totalDataReference.keepSynced(true);
 
-        getUserData(userGroupRef);
-        getDataFromFirebase(mTotalDataReference);
+//        DatabaseReference userGroupRef = mFirebaseHelper.getUsersGroupReference(user.getUid());
+//        userGroupRef.keepSynced(true);
+
+//        getUserData(userGroupRef);
+        getDataFromFirebase(totalDataReference);
     }
 
     public void getDataFromFirebase(DatabaseReference reference) {
@@ -107,78 +109,78 @@ public class MenuPresenter {
         };
         reference.addValueEventListener(postListener);
 
-        new Handler().postDelayed((new Runnable() {
-            @Override
-            public void run() {
-                loadGroupNotes();
-            }
-        }), 500);
+//        new Handler().postDelayed((new Runnable() {
+//            @Override
+//            public void run() {
+//                loadGroupNotes();
+//            }
+//        }), 500);
     }
 
-    public void loadGroupNotes() {
-        for (String key : keys) {
-            Log.v(TAG, "loadGroupNotes(), key: " + key);
+//    public void loadGroupNotes() {
+//        for (String key : keys) {
+//            Log.v(TAG, "loadGroupNotes(), key: " + key);
+//
+//            DatabaseReference mReferenceGroup = getTotalGroupRef(key);
+//            mReferenceGroup.keepSynced(true);
+////            getGroupsNotes(mReferenceGroup);
+//        }
+//    }
+//
+//    private DatabaseReference getTotalGroupRef(String key) {
+//        return mGroupsReference.child(key).child("Total Data");
+//    }
+//
+//    public void getGroupsNotes(DatabaseReference reference) {
+//        mBinding.progressBar.setVisibility(View.VISIBLE);
+//
+//        ValueEventListener postListener = new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                Log.v(TAG, "getGroupsNotes works");
+//
+//                MainMenuNote mainMenuNote = new MainMenuNote();
+//                mainMenuNote.setTitle(dataSnapshot.getValue(MainMenuNote.class).getTitle());
+//                mainMenuNote.setTotal_sum(dataSnapshot.getValue(MainMenuNote.class).getTotal_sum());
+//                mainMenuNote.setDate(dataSnapshot.getValue(MainMenuNote.class).getDate());
+//                mainMenuNote.setId(dataSnapshot.getValue(MainMenuNote.class).getId());
+//                mainMenuNote.setGroup(dataSnapshot.getValue(MainMenuNote.class).isGroup());
+//                mArrayList.add(mainMenuNote);
+//
+//                updateUI(mArrayList);
+//                mBinding.setNote(new FormatSum(mArrayList.size()));
+//                mBinding.progressBar.setVisibility(View.GONE);
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                // Getting Object failed, log a message
+//                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+//            }
+//        };
+//        reference.addValueEventListener(postListener);
+//    }
 
-            DatabaseReference mReferenceGroup = getTotalGroupRef(key);
-            mReferenceGroup.keepSynced(true);
-//            getGroupsNotes(mReferenceGroup);
-        }
-    }
-
-    private DatabaseReference getTotalGroupRef(String key) {
-        return mGroupsReference.child(key).child("Total Data");
-    }
-
-    public void getGroupsNotes(DatabaseReference reference) {
-        mBinding.progressBar.setVisibility(View.VISIBLE);
-
-        ValueEventListener postListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.v(TAG, "getGroupsNotes works");
-
-                MainMenuNote mainMenuNote = new MainMenuNote();
-                mainMenuNote.setTitle(dataSnapshot.getValue(MainMenuNote.class).getTitle());
-                mainMenuNote.setTotal_sum(dataSnapshot.getValue(MainMenuNote.class).getTotal_sum());
-                mainMenuNote.setDate(dataSnapshot.getValue(MainMenuNote.class).getDate());
-                mainMenuNote.setId(dataSnapshot.getValue(MainMenuNote.class).getId());
-                mainMenuNote.setGroup(dataSnapshot.getValue(MainMenuNote.class).isGroup());
-                mArrayList.add(mainMenuNote);
-
-                updateUI(mArrayList);
-                mBinding.setNote(new FormatSum(mArrayList.size()));
-                mBinding.progressBar.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Object failed, log a message
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-            }
-        };
-        reference.addValueEventListener(postListener);
-    }
-
-    public void getUserData(DatabaseReference reference) {
-        ValueEventListener postListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.v(TAG, "getUserData works");
-
-                for (DataSnapshot snap : dataSnapshot.getChildren()) {
-                    keys.add(snap.getKey());
-                    Log.v(TAG, "KEYS: " + snap.getKey());
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Object failed, log a message
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-            }
-        };
-        reference.addValueEventListener(postListener);
-    }
+//    public void getUserData(DatabaseReference reference) {
+//        ValueEventListener postListener = new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                Log.v(TAG, "getUserData works");
+//
+//                for (DataSnapshot snap : dataSnapshot.getChildren()) {
+//                    keys.add(snap.getKey());
+//                    Log.v(TAG, "KEYS: " + snap.getKey());
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                // Getting Object failed, log a message
+//                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+//            }
+//        };
+//        reference.addValueEventListener(postListener);
+//    }
 
     private void loadRecyclerView(ArrayList<MainMenuNote> list) {
         mRecyclerView = mBinding.recycler;

@@ -3,8 +3,6 @@ package com.zivapp.notes.views.login;
 import android.util.Patterns;
 import android.widget.EditText;
 
-import androidx.lifecycle.ViewModel;
-
 public class LoginPresenter {
 
     public boolean validateForm(EditText userEmail, EditText userPassword) {

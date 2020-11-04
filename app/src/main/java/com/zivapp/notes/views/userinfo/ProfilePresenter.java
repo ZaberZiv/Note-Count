@@ -20,8 +20,10 @@ import com.zivapp.notes.views.mainmenu.MenuNotesActivity;
 public class ProfilePresenter {
 
     private static final String TAG = "ProfilePresenter";
+
     private FirebaseHelper mFirebaseHelper;
     private ActivityProfileBinding mBinding;
+
     private EditText mEditTextUserName, mEditTextUserPhone;
     private Button mButtonConfirm;
     private Activity mActivity;
@@ -114,7 +116,7 @@ public class ProfilePresenter {
     }
 
     void writeNewUser(String userId, String name, String phone) {
-        mFirebaseHelper.getUsersReference().child(userId).child("name").setValue(name);
-        mFirebaseHelper.getUsersReference().child(userId).child("phone").setValue(phone);
+        mFirebaseHelper.getUserNameReference(userId).setValue(name);
+        mFirebaseHelper.getUserPhoneReference(userId).setValue(phone);
     }
 }

@@ -43,17 +43,17 @@ public class NotePresenter {
     private String ID, mTitleName, mDate;
     private int mTotalSum;
     private boolean mFlag;
-    private MainMenuNote mainMenuNote;
+    private MainMenuNote mMainMenuNote;
     private ArrayList<Note> mNoteList = new ArrayList<>();
 
     private ActivityNoteBinding mBinding;
     private RecyclerView mRecyclerView;
     private AdapterNote mAdapter;
 
+    private FirebaseHelper mFirebaseHelper;
     private DatabaseReference mNotesIDReference;
     private DatabaseReference mTotalDataReference;
 
-    private FirebaseHelper firebaseHelper;
 
     public NotePresenter(Context context, Activity activity) {
         this.context = context;
@@ -61,7 +61,6 @@ public class NotePresenter {
 
         mBinding = DataBindingUtil.setContentView(activity, R.layout.activity_note);
         mDate = UtilDate.getCurrentDate();
-        firebaseHelper = new FirebaseHelper();
 
         loadRecyclerView(mNoteList);
         firebaseReferences();
@@ -70,8 +69,10 @@ public class NotePresenter {
     }
 
     private void firebaseReferences() {
-        mNotesIDReference = firebaseHelper.getNotesReference();
-        mTotalDataReference = firebaseHelper.getTotalDataReference();
+        mFirebaseHelper = new FirebaseHelper();
+
+        mNotesIDReference = mFirebaseHelper.getNotesReference();
+        mTotalDataReference = mFirebaseHelper.getTotalDataReference();
 
         mNotesIDReference.keepSynced(true);
         mTotalDataReference.keepSynced(true);
@@ -105,7 +106,7 @@ public class NotePresenter {
             Log.v(TAG, "This note is already exist! ID: " + uID);
 
             mNoteList = getDataFromFirebase(getNoteRef(uID));
-            mainMenuNote = getTotalDataFromFirebase(getTotalDataRef(uID));
+            mMainMenuNote = getTotalDataFromFirebase(getTotalDataRef(uID));
 
             mFlag = false;
         } else { // if not exist in database
@@ -290,11 +291,16 @@ public class NotePresenter {
 
         if (mTotalSum != 0) {
             Log.v(TAG, "DATA SAVED for the first time!");
-            MainMenuNote mainMenuNote = new MainMenuNote(mDate, mTitleName, mTotalSum, ID,false);
-            saveTotalData(ID, mainMenuNote);
+            saveData();
+
         } else {
             Log.v(TAG, "Empty note haven't saved!");
         }
+    }
+
+    private void saveData() {
+        MainMenuNote mainMenuNote = new MainMenuNote(mDate, mTitleName, mTotalSum, ID,false);
+        saveTotalData(ID, mainMenuNote);
     }
 
     /**
@@ -306,16 +312,14 @@ public class NotePresenter {
         getTitleName();
 
         // If title or total sum has changed than update data
-        if (mainMenuNote.getTitle() == null) {
+        if (mMainMenuNote.getTitle() == null) {
             Log.v(TAG, "mainMenuNote is NULL");
-            MainMenuNote mainMenuNote = new MainMenuNote(mDate, mTitleName, mTotalSum, ID,false);
-            saveTotalData(ID, mainMenuNote);
+            saveData();
 
-        } else if (!mainMenuNote.getTitle().equals(mTitleName) || mainMenuNote.getTotal_sum() != mTotalSum) {
+        } else if (!mMainMenuNote.getTitle().equals(mTitleName) || mMainMenuNote.getTotal_sum() != mTotalSum) {
             Log.v(TAG, "DATA UPDATED");
+            saveData();
 
-            MainMenuNote mainMenuNote = new MainMenuNote(mDate, mTitleName, mTotalSum, ID,false);
-            saveTotalData(ID, mainMenuNote);
         } else {
             Log.v(TAG, "Note haven't changed!");
         }
