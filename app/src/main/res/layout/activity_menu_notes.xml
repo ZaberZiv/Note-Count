@@ -39,7 +39,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     app:layout_collapseMode="pin"
-                    app:menu="@menu/main_menu_spinner"
+                    app:menu="@menu/main_menu"
                     app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
                 <LinearLayout
