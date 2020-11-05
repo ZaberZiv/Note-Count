@@ -46,8 +46,8 @@ public class MenuPresenter {
         loadRecyclerView(mArrayList);
         firebaseInstances();
         signOutButton();
-        fabButton();
-        contactsButton();
+        noteButton();
+        groupNoteButton();
     }
 
     public void firebaseInstances() {
@@ -128,8 +128,8 @@ public class MenuPresenter {
     /**
      * Floating Action Button. Redirect to NoteActivity.
      */
-    private void fabButton() {
-        mBinding.fab.setOnClickListener(new View.OnClickListener() {
+    private void noteButton() {
+        mBinding.noteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 context.startActivity(new Intent(context, NoteActivity.class));
@@ -137,7 +137,7 @@ public class MenuPresenter {
         });
     }
 
-    public void contactsButton() {
+    public void groupNoteButton() {
         mBinding.groupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
