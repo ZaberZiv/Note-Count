@@ -10,6 +10,6 @@ public class UtilDate {
     }
 
     public static String getGroupDate() {
-        return new SimpleDateFormat("HH:mm | dd MMM yyyy").format(new Date().getTime());
+        return new SimpleDateFormat("HH:mm | dd MMM").format(new Date().getTime());
     }
 }
