@@ -74,7 +74,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="150dp"
-                        android:text="Sign out" />
+                        android:text="@string/btn_sign_out" />
 
                 </LinearLayout>
 
@@ -106,14 +106,6 @@
 
         </androidx.core.widget.NestedScrollView>
 
-<!--        <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-<!--            android:id="@+id/fab"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_gravity="bottom|end"-->
-<!--            android:layout_margin="16dp"-->
-<!--            app:srcCompat="@drawable/ic_baseline_add_24" />-->
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -127,9 +119,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_weight="1"
-                android:textColor="@color/white"
                 android:backgroundTint="@color/colorAccent"
-                android:text="Group note" />
+                android:text="@string/btn_group_note"
+                android:textColor="@color/white" />
 
             <Button
                 android:id="@+id/note_button"
@@ -138,9 +130,9 @@
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="4dp"
                 android:layout_weight="1"
-                android:textColor="@color/white"
                 android:backgroundTint="@color/colorAccent"
-                android:text="Note" />
+                android:text="@string/btn_note"
+                android:textColor="@color/white" />
 
         </LinearLayout>
 
