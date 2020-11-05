@@ -8,8 +8,14 @@ public class GroupNote extends Note {
     public GroupNote() {
     }
 
-    public GroupNote(String name, int sum, String member, String date) {
-        super(name, sum);
+    public GroupNote(String message, int sum, String member, String date) {
+        super(message, sum);
+        this.member = member;
+        this.date = date;
+    }
+
+    public GroupNote(String message, int sum, String member, String date, String id) {
+        super(message, sum, id);
         this.member = member;
         this.date = date;
     }

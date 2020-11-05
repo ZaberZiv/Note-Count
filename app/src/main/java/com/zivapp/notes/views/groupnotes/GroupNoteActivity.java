@@ -172,7 +172,8 @@ public class GroupNoteActivity extends AppCompatActivity {
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     GroupNote notes = new GroupNote();
-                    notes.setUid(snapshot.getKey());
+                    notes.setId_note(snapshot.getKey());
+                    notes.setUid(snapshot.getValue(Note.class).getUid());
                     notes.setMessage(snapshot.getValue(Note.class).getMessage());
                     notes.setSum(snapshot.getValue(Note.class).getSum());
                     notes.setMember(snapshot.getValue(GroupNote.class).getMember());
@@ -204,10 +205,10 @@ public class GroupNoteActivity extends AppCompatActivity {
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                mainMenuNote.setId(dataSnapshot.getValue(MainMenuNote.class).getId());
-                mainMenuNote.setDate(dataSnapshot.getValue(MainMenuNote.class).getDate());
                 mainMenuNote.setTitle(dataSnapshot.getValue(MainMenuNote.class).getTitle());
                 mainMenuNote.setTotal_sum(dataSnapshot.getValue(MainMenuNote.class).getTotal_sum());
+                mainMenuNote.setId(dataSnapshot.getValue(MainMenuNote.class).getId());
+                mainMenuNote.setDate(dataSnapshot.getValue(MainMenuNote.class).getDate());
 
                 setMainMenuNoteDataInLayout(mainMenuNote);
                 changeFocusIfTitleExist(mainMenuNote);
@@ -346,7 +347,12 @@ public class GroupNoteActivity extends AppCompatActivity {
     }
 
     private void saveGroupNoteInFirebase(String message, int price) {
-        GroupNote gNote = new GroupNote(message, price, mUser.getName(), UtilDate.getGroupDate());
+        GroupNote gNote = new GroupNote();
+        gNote.setMessage(message);
+        gNote.setSum(price);
+        gNote.setMember(mUser.getName());
+        gNote.setDate(UtilDate.getGroupDate());
+        gNote.setUid(mFirebaseHelper.getFirebaseUser().getUid());
         mNotesReference.push().setValue(gNote);
     }
 

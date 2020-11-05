@@ -1,9 +1,6 @@
 package com.zivapp.notes.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
-public class User implements Parcelable {
+public class User {
 
     private String name;
     private String email;
@@ -65,32 +62,5 @@ public class User implements Parcelable {
 
     public void setSelected(boolean selected) {
         this.selected = selected;
-    }
-
-    // Parcelable methods
-    public static final Creator<User> CREATOR = new Creator<User>() {
-
-        @Override
-        public User createFromParcel(Parcel source) {
-            return new User(source.readString(), source.readString(), source.readString(), source.readString());
-        }
-
-        @Override
-        public User[] newArray(int size) {
-            return new User[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(name);
-        dest.writeString(email);
-        dest.writeString(phone);
-        dest.writeString(id);
     }
 }
