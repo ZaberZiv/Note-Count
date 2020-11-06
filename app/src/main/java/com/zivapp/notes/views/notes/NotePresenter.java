@@ -23,6 +23,7 @@ import com.zivapp.notes.firebase.FirebaseHelper;
 import com.zivapp.notes.model.FormatSum;
 import com.zivapp.notes.model.MainMenuNote;
 import com.zivapp.notes.model.Note;
+import com.zivapp.notes.util.ShareData;
 import com.zivapp.notes.util.UtilConverter;
 import com.zivapp.notes.util.UtilDate;
 import com.zivapp.notes.util.UtilIntent;
@@ -91,7 +92,7 @@ public class NotePresenter {
     }
 
     public void shareData() {
-        UtilIntent.shareDataByIntent(context, mNoteList.get(0).getMessage());
+        UtilIntent.shareDataByIntent(context, ShareData.formatStringData(mNoteList));
     }
 
     /**

@@ -43,13 +43,6 @@ public class NoteActivity extends AppCompatActivity {
 
     public void shareDataButton(MenuItem item) {
         mNotePresenter.shareData();
-//        Intent sendIntent = new Intent();
-//        sendIntent.setAction(Intent.ACTION_SEND);
-//        sendIntent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
-//        sendIntent.setType("text/plain");
-//
-//        Intent shareIntent = Intent.createChooser(sendIntent, null);
-//        startActivity(shareIntent);
     }
 
     @Override

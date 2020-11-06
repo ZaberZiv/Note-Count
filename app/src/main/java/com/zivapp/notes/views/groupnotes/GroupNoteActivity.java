@@ -27,6 +27,7 @@ import com.zivapp.notes.model.Note;
 import com.zivapp.notes.databinding.ActivityGroupNoteBinding;
 import com.zivapp.notes.model.FormatSum;
 import com.zivapp.notes.model.User;
+import com.zivapp.notes.util.ShareData;
 import com.zivapp.notes.util.UtilConverter;
 import com.zivapp.notes.util.UtilDate;
 import com.zivapp.notes.util.UtilIntent;
@@ -446,6 +447,6 @@ public class GroupNoteActivity extends AppCompatActivity {
     }
 
     public void shareData() {
-        UtilIntent.shareDataByIntent(this, mNoteList.get(0).getMessage());
+        UtilIntent.shareDataByIntent(this, ShareData.formatStringDataGroup(mNoteList));
     }
 }
