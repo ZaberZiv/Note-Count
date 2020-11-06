@@ -7,6 +7,9 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -24,8 +27,11 @@ import com.zivapp.notes.model.Note;
 import com.zivapp.notes.databinding.ActivityGroupNoteBinding;
 import com.zivapp.notes.model.FormatSum;
 import com.zivapp.notes.model.User;
+import com.zivapp.notes.util.ShareData;
 import com.zivapp.notes.util.UtilConverter;
 import com.zivapp.notes.util.UtilDate;
+import com.zivapp.notes.util.UtilIntent;
+import com.zivapp.notes.views.notes.NotePresenter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -427,5 +433,21 @@ public class GroupNoteActivity extends AppCompatActivity {
         } else {
             Log.v(TAG, "Note haven't changed!");
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.note_menu, menu);
+        return true;
+    }
+
+    public void shareDataButton(MenuItem item) {
+        shareData();
+    }
+
+    public void shareData() {
+        UtilIntent.shareDataByIntent(this,
+                ShareData.formatStringDataGroup(mNoteList, mMainMenuNote.getTitle()));
     }
 }

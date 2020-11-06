@@ -12,9 +12,10 @@
     <string name="hint_price">Add price</string>
 
     <string name="btn_add">Add</string>
-    <string name="btn_sign_out">Sign out</string>
     <string name="btn_group_note">Group note</string>
     <string name="btn_note">Note</string>
+    <string name="btn_sign_out">Sign out</string>
+    <string name="btn_share">Share</string>
 
     <string name="dialog_title">Edit data</string>
     <string name="dialog_header">Type new data below</string>

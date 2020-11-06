@@ -23,8 +23,10 @@ import com.zivapp.notes.firebase.FirebaseHelper;
 import com.zivapp.notes.model.FormatSum;
 import com.zivapp.notes.model.MainMenuNote;
 import com.zivapp.notes.model.Note;
+import com.zivapp.notes.util.ShareData;
 import com.zivapp.notes.util.UtilConverter;
 import com.zivapp.notes.util.UtilDate;
+import com.zivapp.notes.util.UtilIntent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +55,6 @@ public class NotePresenter {
     private FirebaseHelper mFirebaseHelper;
     private DatabaseReference mNotesIDReference;
     private DatabaseReference mTotalDataReference;
-
 
     public NotePresenter(Context context, Activity activity) {
         this.context = context;
@@ -88,6 +89,11 @@ public class NotePresenter {
 
     private void saveTotalData(String id, MainMenuNote mainMenuNote) {
         getTotalDataRef(id).setValue(mainMenuNote);
+    }
+
+    public void shareData() {
+        UtilIntent.shareDataByIntent(context,
+                ShareData.formatStringData(mNoteList, mMainMenuNote.getTitle()));
     }
 
     /**

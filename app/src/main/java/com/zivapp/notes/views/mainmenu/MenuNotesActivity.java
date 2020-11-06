@@ -2,6 +2,7 @@ package com.zivapp.notes.views.mainmenu;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,31 +34,9 @@ public class MenuNotesActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Log.v(TAG, "onOptionsItemSelected()");
-
-        if (item.getItemId() == R.id.sign_out) {
-            button();
-            Log.v(TAG, "sign_out");
-
-            return true;
-        }
-        Log.v(TAG, "onOptionsItemSelected");
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    public void button() {
-        Log.v(TAG, "button");
-
-        findViewById(R.id.sign_out).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.v(TAG, "User signed out!");
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(MenuNotesActivity.this, LoginActivity.class));
-            }
-        });
+    public void signOutButton(MenuItem item) {
+        Log.v(TAG, "User signed out!");
+        FirebaseAuth.getInstance().signOut();
+        startActivity(new Intent(MenuNotesActivity.this, LoginActivity.class));
     }
 }
