@@ -31,7 +31,6 @@ import com.zivapp.notes.util.ShareData;
 import com.zivapp.notes.util.UtilConverter;
 import com.zivapp.notes.util.UtilDate;
 import com.zivapp.notes.util.UtilIntent;
-import com.zivapp.notes.views.notes.NotePresenter;
 
 import java.util.ArrayList;
 import java.util.List;

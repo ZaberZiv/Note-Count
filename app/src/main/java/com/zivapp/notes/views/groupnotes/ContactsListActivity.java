@@ -6,6 +6,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -48,7 +49,7 @@ public class ContactsListActivity extends AppCompatActivity implements SelectedU
     private FirebaseHelper mFirebaseHelper;
     private DatabaseReference mGroupIDReference;
     private DatabaseReference mUserReference;
-
+    private DatabaseReference mAllUsersReference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +69,7 @@ public class ContactsListActivity extends AppCompatActivity implements SelectedU
         }), 500);
 
         buttonSelectUsers();
+        refreshFirebaseCallback();
     }
 
     private void checkPermission() {
@@ -96,12 +98,11 @@ public class ContactsListActivity extends AppCompatActivity implements SelectedU
         return listOfMatchedUsers;
     }
 
-    // TODO: refactor this method, add FirebaseHelper
     public void firebaseInstances() {
         mFirebaseHelper = new FirebaseHelper();
-        DatabaseReference userReference = mFirebaseHelper.getUsersReference();
-        userReference.keepSynced(true);
-        mFirebaseUsersList = getDataFromFirebase(userReference);
+        mAllUsersReference = mFirebaseHelper.getUsersReference();
+        mAllUsersReference.keepSynced(true);
+        mFirebaseUsersList = getDataFromFirebase(mAllUsersReference);
     }
 
     public ArrayList<User> getDataFromFirebase(DatabaseReference reference) {
@@ -293,5 +294,17 @@ public class ContactsListActivity extends AppCompatActivity implements SelectedU
         Intent intent = new Intent(this, GroupNoteActivity.class);
         intent.putExtra("key", key);
         startActivity(intent);
+    }
+
+    public void refreshFirebaseCallback() {
+        mBinding.refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                getDataFromFirebase(mAllUsersReference);
+
+                mBinding.refreshLayout.setRefreshing(false);
+            }
+        });
     }
 }

@@ -9,8 +9,8 @@ import android.view.View;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -22,7 +22,6 @@ import com.zivapp.notes.firebase.FirebaseHelper;
 import com.zivapp.notes.model.FormatSum;
 import com.zivapp.notes.model.MainMenuNote;
 import com.zivapp.notes.views.groupnotes.ContactsListActivity;
-import com.zivapp.notes.views.login.LoginActivity;
 import com.zivapp.notes.views.notes.NoteActivity;
 
 import java.util.ArrayList;
@@ -38,6 +37,7 @@ public class MenuPresenter {
     private RecyclerView mRecyclerView;
     private AdapterMenu mAdapter;
     private ArrayList<MainMenuNote> mArrayList = new ArrayList<>();
+    private DatabaseReference mTotalDataReference;
 
     public MenuPresenter(final Context context, Activity activity) {
         this.context = context;
@@ -45,16 +45,16 @@ public class MenuPresenter {
 
         loadRecyclerView(mArrayList);
         firebaseInstances();
-        signOutButton();
         noteButton();
         groupNoteButton();
+        refreshFirebaseCallback();
     }
 
     public void firebaseInstances() {
         FirebaseHelper firebaseHelper = new FirebaseHelper();
-        DatabaseReference totalDataReference = firebaseHelper.getTotalDataRefCurrentUser();
-        totalDataReference.keepSynced(true);
-        getDataFromFirebase(totalDataReference);
+        mTotalDataReference = firebaseHelper.getTotalDataRefCurrentUser();
+        mTotalDataReference.keepSynced(true);
+        getDataFromFirebase(mTotalDataReference);
     }
 
     public void getDataFromFirebase(DatabaseReference reference) {
@@ -112,20 +112,6 @@ public class MenuPresenter {
     }
 
     /**
-     * Sign Out Button. Redirect to LoginActivity.
-     */
-    private void signOutButton() {
-        mBinding.signOutBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
-                Log.v(TAG, "User signed out!");
-                context.startActivity(new Intent(context, LoginActivity.class));
-            }
-        });
-    }
-
-    /**
      * Floating Action Button. Redirect to NoteActivity.
      */
     private void noteButton() {
@@ -144,6 +130,18 @@ public class MenuPresenter {
                 Intent intent = new Intent(context, ContactsListActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 context.startActivity(intent);
+            }
+        });
+    }
+
+    public void refreshFirebaseCallback() {
+        mBinding.refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                getDataFromFirebase(mTotalDataReference);
+
+                mBinding.refreshLayout.setRefreshing(false);
             }
         });
     }

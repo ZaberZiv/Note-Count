@@ -34,6 +34,9 @@ public class MenuNotesActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Sign Out Button. Redirect to LoginActivity.
+     */
     public void signOutButton(MenuItem item) {
         Log.v(TAG, "User signed out!");
         FirebaseAuth.getInstance().signOut();

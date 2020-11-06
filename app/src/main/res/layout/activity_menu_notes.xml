@@ -69,13 +69,6 @@
                         android:textSize="24sp"
                         android:visibility="@{note.countNotes == 0 ? View.GONE : View.VISIBLE}" />
 
-                    <Button
-                        android:id="@+id/sign_out_btn"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="150dp"
-                        android:text="@string/btn_sign_out" />
-
                 </LinearLayout>
 
             </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -97,10 +90,18 @@
                     layout="@layout/message_empty_note"
                     android:visibility="@{note.countNotes == 0 ? View.VISIBLE : View.GONE}" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycler"
+                <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                    android:id="@+id/refreshLayout"
+                    android:minHeight="1000dp"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
             </RelativeLayout>
 
