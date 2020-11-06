@@ -332,7 +332,7 @@ public class GroupNoteActivity extends AppCompatActivity {
                 if (editTextName.getText().toString().trim().equals("")
                         || editTextPrice.getText().toString().trim().equals("")) {
                     Toast.makeText(GroupNoteActivity.this,
-                            "Please add both Sum and Name of operation",
+                            R.string.no_data,
                             Toast.LENGTH_SHORT).show();
                     return;
                 }

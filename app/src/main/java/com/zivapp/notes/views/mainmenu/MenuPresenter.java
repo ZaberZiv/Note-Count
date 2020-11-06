@@ -37,7 +37,6 @@ public class MenuPresenter {
     private RecyclerView mRecyclerView;
     private AdapterMenu mAdapter;
     private ArrayList<MainMenuNote> mArrayList = new ArrayList<>();
-    private DatabaseReference mTotalDataReference;
 
     public MenuPresenter(final Context context, Activity activity) {
         this.context = context;
@@ -47,14 +46,13 @@ public class MenuPresenter {
         firebaseInstances();
         noteButton();
         groupNoteButton();
-        refreshFirebaseCallback();
     }
 
     public void firebaseInstances() {
         FirebaseHelper firebaseHelper = new FirebaseHelper();
-        mTotalDataReference = firebaseHelper.getTotalDataRefCurrentUser();
-        mTotalDataReference.keepSynced(true);
-        getDataFromFirebase(mTotalDataReference);
+        DatabaseReference totalDataReference = firebaseHelper.getTotalDataRefCurrentUser();
+        totalDataReference.keepSynced(true);
+        getDataFromFirebase(totalDataReference);
     }
 
     public void getDataFromFirebase(DatabaseReference reference) {
@@ -130,18 +128,6 @@ public class MenuPresenter {
                 Intent intent = new Intent(context, ContactsListActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 context.startActivity(intent);
-            }
-        });
-    }
-
-    public void refreshFirebaseCallback() {
-        mBinding.refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-
-                getDataFromFirebase(mTotalDataReference);
-
-                mBinding.refreshLayout.setRefreshing(false);
             }
         });
     }
