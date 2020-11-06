@@ -13,11 +13,11 @@ public class ShareData {
     private static final String TOTAL_SUM = "Общая сумма";
     private static final String CURRENCY_KZ = ": KZT ";
 
-    public static String formatStringData(ArrayList<Note> list) {
+    public static String formatStringData(ArrayList<Note> list, String title) {
         StringBuilder stringBuilder = new StringBuilder();
         int total_sum = 0;
 
-        stringBuilder = getAppName(stringBuilder);
+        stringBuilder = getAppName(stringBuilder, title);
 
         for (Note note : list) {
             stringBuilder
@@ -34,11 +34,11 @@ public class ShareData {
         return stringBuilder.toString();
     }
 
-    public static String formatStringDataGroup(ArrayList<GroupNote> list) {
+    public static String formatStringDataGroup(ArrayList<GroupNote> list, String title) {
         StringBuilder stringBuilder = new StringBuilder();
         int total_sum = 0;
 
-        stringBuilder = getAppName(stringBuilder);
+        stringBuilder = getAppName(stringBuilder, title);
 
         for (GroupNote note : list) {
             stringBuilder
@@ -57,11 +57,14 @@ public class ShareData {
         return stringBuilder.toString();
     }
 
-    private static StringBuilder getAppName(StringBuilder builder) {
+    private static StringBuilder getAppName(StringBuilder builder, String title) {
         return builder
                 .append(TOP_LINE)
                 .append("\n")
                 .append(APP_NAME)
+                .append("\n\n")
+                .append("Note: ")
+                .append(title)
                 .append("\n\n");
     }
 

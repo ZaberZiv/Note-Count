@@ -92,7 +92,8 @@ public class NotePresenter {
     }
 
     public void shareData() {
-        UtilIntent.shareDataByIntent(context, ShareData.formatStringData(mNoteList));
+        UtilIntent.shareDataByIntent(context,
+                ShareData.formatStringData(mNoteList, mMainMenuNote.getTitle()));
     }
 
     /**

@@ -447,6 +447,7 @@ public class GroupNoteActivity extends AppCompatActivity {
     }
 
     public void shareData() {
-        UtilIntent.shareDataByIntent(this, ShareData.formatStringDataGroup(mNoteList));
+        UtilIntent.shareDataByIntent(this,
+                ShareData.formatStringDataGroup(mNoteList, mMainMenuNote.getTitle()));
     }
 }
