@@ -3,12 +3,17 @@ package com.zivapp.notes.views.notes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.zivapp.notes.R;
 import com.zivapp.notes.model.FormatSum;
 import com.zivapp.notes.util.UtilConverter;
+import com.zivapp.notes.util.UtilIntent;
 
 public class NoteActivity extends AppCompatActivity {
 
@@ -27,6 +32,24 @@ public class NoteActivity extends AppCompatActivity {
     private void setBackArrow() {
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.note_menu, menu);
+        return true;
+    }
+
+    public void shareDataButton(MenuItem item) {
+        mNotePresenter.shareData();
+//        Intent sendIntent = new Intent();
+//        sendIntent.setAction(Intent.ACTION_SEND);
+//        sendIntent.putExtra(Intent.EXTRA_TEXT, "This is my text to send.");
+//        sendIntent.setType("text/plain");
+//
+//        Intent shareIntent = Intent.createChooser(sendIntent, null);
+//        startActivity(shareIntent);
     }
 
     @Override
