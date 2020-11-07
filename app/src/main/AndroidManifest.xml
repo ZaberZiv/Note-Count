@@ -13,9 +13,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".views.groupnotes.ContactsListActivity"
-            android:parentActivityName=".views.mainmenu.MenuNotesActivity"/>
+            android:parentActivityName=".views.mainmenu.MenuNotesActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".views.groupnotes.GroupNoteActivity"
-            android:parentActivityName=".views.mainmenu.MenuNotesActivity"/>
+            android:parentActivityName=".views.mainmenu.MenuNotesActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".views.authsplashscreen.SplashScreenActivity"
             android:screenOrientation="portrait">
@@ -25,7 +27,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".views.userinfo.ProfileActivity" />
+        <activity android:name=".views.userinfo.ProfileActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".views.login.LoginActivity"
             android:screenOrientation="portrait" />

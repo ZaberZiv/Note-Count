@@ -2,6 +2,7 @@ package com.zivapp.notes.views.groupnotes;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,7 +37,6 @@ import java.util.ArrayList;
 
 public class ContactsListActivity extends AppCompatActivity implements SelectedUsersListener {
     private static final String TAG = "ContactsListActivity";
-
     public static final int REQUEST_READ_CONTACTS = 79;
 
     private ActivityContactsListBinding mBinding;
@@ -50,6 +50,7 @@ public class ContactsListActivity extends AppCompatActivity implements SelectedU
     private DatabaseReference mGroupIDReference;
     private DatabaseReference mUserReference;
     private DatabaseReference mAllUsersReference;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,19 +67,11 @@ public class ContactsListActivity extends AppCompatActivity implements SelectedU
             public void run() {
                 updateUI(findMatchedUsers(mContactsList, mFirebaseUsersList));
             }
-        }), 500);
+        }), 300);
 
         buttonSelectUsers();
         refreshFirebaseCallback();
-    }
-
-    private void checkPermission() {
-        if (ActivityCompat.checkSelfPermission(this,
-                android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-            mContactsList = getAllContacts();
-        } else {
-            requestPermission();
-        }
+        setBackArrow();
     }
 
     private ArrayList<User> findMatchedUsers(ArrayList<User> contactsList, ArrayList<User> firebaseUsersList) {
@@ -93,6 +86,13 @@ public class ContactsListActivity extends AppCompatActivity implements SelectedU
                 }
             }
         }
+
+        if (listOfMatchedUsers.size() == 0) {
+            mBinding.noFriendsLayout.setVisibility(View.VISIBLE);
+        } else {
+            mBinding.noFriendsLayout.setVisibility(View.GONE);
+        }
+
         Log.v(TAG, "Match loop: finished working");
 
         return listOfMatchedUsers;
@@ -128,6 +128,16 @@ public class ContactsListActivity extends AppCompatActivity implements SelectedU
         });
 
         return list;
+    }
+
+
+    private void checkPermission() {
+        if (ActivityCompat.checkSelfPermission(this,
+                android.Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+            mContactsList = getAllContacts();
+        } else {
+            requestPermission();
+        }
     }
 
     private void requestPermission() {
@@ -233,7 +243,7 @@ public class ContactsListActivity extends AppCompatActivity implements SelectedU
     }
 
     private void buttonSelectUsers() {
-        mBinding.btnAdd.setOnClickListener(new View.OnClickListener() {
+        mBinding.btnAddContacts.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -284,9 +294,9 @@ public class ContactsListActivity extends AppCompatActivity implements SelectedU
     @Override
     public void onSelectedAction(Boolean isSelected) {
         if (isSelected) {
-            mBinding.btnAdd.setVisibility(View.VISIBLE);
+            mBinding.btnAddContacts.setTranslationY(-50);
         } else {
-            mBinding.btnAdd.setVisibility(View.GONE);
+            mBinding.btnAddContacts.setTranslationY(50);
         }
     }
 
@@ -306,5 +316,10 @@ public class ContactsListActivity extends AppCompatActivity implements SelectedU
                 mBinding.refreshLayout.setRefreshing(false);
             }
         });
+    }
+
+    private void setBackArrow() {
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 }

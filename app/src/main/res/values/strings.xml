@@ -1,11 +1,14 @@
 <resources>
-    <string name="app_name">Notes</string>
+    <string name="app_name">Notes &amp; Count</string>
+    <string name="app_name_contacts_list">Contacts List</string>
 
     <string name="total_notes">Total notes:</string>
     <string name="image_descr">Empty list of notes</string>
     <string name="empty_list_text">There is nothing to show you. \n
-        Please add new note by pressing green circle button below.</string>
+        Please add new note by pressing green buttons below.</string>
     <string name="no_data">Please add both Sum and Name of operation</string>
+    <string name="image_descr_no_contacts">No contacts</string>
+    <string name="no_friends">Looks like your friends do not use our app yet…</string>
 
     <string name="hint_name">Note name</string>
     <string name="hint_text">Add text</string>
