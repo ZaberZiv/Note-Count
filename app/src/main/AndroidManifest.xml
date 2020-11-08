@@ -12,7 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".views.groupnotes.ContactsListActivity"
+        <activity android:name=".views.contacts.ContactsListActivity"
             android:parentActivityName=".views.mainmenu.MenuNotesActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".views.groupnotes.GroupNoteActivity"

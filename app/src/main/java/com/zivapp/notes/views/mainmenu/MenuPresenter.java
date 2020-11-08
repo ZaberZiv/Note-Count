@@ -3,18 +3,13 @@ package com.zivapp.notes.views.mainmenu;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 import com.zivapp.notes.R;
 import com.zivapp.notes.adapters.AdapterMenu;
 import com.zivapp.notes.databinding.ActivityMenuNotesBinding;
@@ -22,10 +17,8 @@ import com.zivapp.notes.firebase.FirebaseCallback;
 import com.zivapp.notes.firebase.FirebaseHelper;
 import com.zivapp.notes.model.FormatSum;
 import com.zivapp.notes.model.MainMenuNote;
-import com.zivapp.notes.model.Note;
-import com.zivapp.notes.views.groupnotes.ContactsListActivity;
+import com.zivapp.notes.views.contacts.ContactsListActivity;
 import com.zivapp.notes.views.notes.NoteActivity;
-import com.zivapp.notes.views.notes.NoteContract;
 
 import java.util.ArrayList;
 

@@ -1,14 +1,13 @@
 package com.zivapp.notes.firebase;
 
 import android.util.Log;
-import android.view.Menu;
-import android.view.View;
+
+import androidx.annotation.NonNull;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-import com.zivapp.notes.model.FormatSum;
 import com.zivapp.notes.model.GroupNote;
 import com.zivapp.notes.model.MainMenuNote;
 import com.zivapp.notes.model.Note;
@@ -28,6 +27,9 @@ public class FirebaseCallback {
     private MenuContract.Presenter menuPresenterInterface;
     private GroupContract.Firebase groupFirebaseInterface;
 
+    public FirebaseCallback() {
+    }
+
     public FirebaseCallback(NoteContract.Firebase firebaseInterface) {
         this.firebaseInterface = firebaseInterface;
     }
@@ -42,6 +44,45 @@ public class FirebaseCallback {
     }
 
     /**
+     * MenuPresenter class
+     * Get title, total sum, date of all Notes from firebase
+     */
+    public ArrayList<MainMenuNote> getMenuNoteDataFromFirebase(DatabaseReference reference) {
+        menuPresenterInterface.progressbarOn();
+
+        final ArrayList<MainMenuNote> list = new ArrayList<>();
+
+        ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                list.clear();
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    MainMenuNote mainMenuNote = new MainMenuNote();
+                    mainMenuNote.setTitle(snapshot.getValue(MainMenuNote.class).getTitle());
+                    mainMenuNote.setTotal_sum(snapshot.getValue(MainMenuNote.class).getTotal_sum());
+                    mainMenuNote.setDate(snapshot.getValue(MainMenuNote.class).getDate());
+                    mainMenuNote.setId(snapshot.getValue(MainMenuNote.class).getId());
+                    mainMenuNote.setGroup(snapshot.getValue(MainMenuNote.class).isGroup());
+                    list.add(mainMenuNote);
+                }
+
+                menuFirebaseInterface.updateNoteUI(list);
+                menuPresenterInterface.progressbarOff();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Object failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        };
+        reference.addValueEventListener(postListener);
+        return list;
+    }
+
+    /**
+     * NotePresenter class
      * Get all messages of this Note from firebase
      */
     public ArrayList<Note> getDataFromFirebase(DatabaseReference reference) {
@@ -75,6 +116,7 @@ public class FirebaseCallback {
     }
 
     /**
+     * NotePresenter class
      * Get title of this Note from firebase
      */
     public MainMenuNote getTotalDataFromFirebase(DatabaseReference reference) {
@@ -102,42 +144,10 @@ public class FirebaseCallback {
         return mainMenuNote;
     }
 
-    public ArrayList<MainMenuNote> getMenuNoteDataFromFirebase(DatabaseReference reference) {
-        menuPresenterInterface.progressbarOn();
-
-        final ArrayList<MainMenuNote> list = new ArrayList<>();
-
-        ValueEventListener postListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                list.clear();
-
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    MainMenuNote mainMenuNote = new MainMenuNote();
-                    mainMenuNote.setTitle(snapshot.getValue(MainMenuNote.class).getTitle());
-                    mainMenuNote.setTotal_sum(snapshot.getValue(MainMenuNote.class).getTotal_sum());
-                    mainMenuNote.setDate(snapshot.getValue(MainMenuNote.class).getDate());
-                    mainMenuNote.setId(snapshot.getValue(MainMenuNote.class).getId());
-                    mainMenuNote.setGroup(snapshot.getValue(MainMenuNote.class).isGroup());
-                    list.add(mainMenuNote);
-                }
-
-                menuFirebaseInterface.updateNoteUI(list);
-                menuPresenterInterface.progressbarOff();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Object failed, log a message
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-            }
-        };
-        reference.addValueEventListener(postListener);
-
-        return list;
-    }
-
-    // User data
+    /**
+     * GroupPresenter class
+     * User data
+     */
     public User getUserFromFirebase(DatabaseReference reference) {
         final User user = new User();
 
@@ -158,11 +168,11 @@ public class FirebaseCallback {
             }
         };
         reference.addValueEventListener(postListener);
-
         return user;
     }
 
     /**
+     * GroupPresenter class
      * Get all messages of this Note from firebase
      */
     public ArrayList<GroupNote> getGroupDataFromFirebase(DatabaseReference reference) {
@@ -198,6 +208,7 @@ public class FirebaseCallback {
         return noteList;
     }
     /**
+     * GroupPresenter class
      * Get title, total sum of this Note from firebase
      */
     public MainMenuNote getGroupTotalDataFromFirebase(DatabaseReference reference) {
@@ -226,6 +237,7 @@ public class FirebaseCallback {
     }
 
     /**
+     * GroupPresenter class
      * Get members (key) of this Group Note from firebase
      */
     public ArrayList<User> getMembersFromFirebase(DatabaseReference reference) {
@@ -250,6 +262,35 @@ public class FirebaseCallback {
             }
         };
         reference.addValueEventListener(postListener);
+        return list;
+    }
+
+    /**
+     * ContactsPresenter
+     * This method calls only once
+     */
+    public ArrayList<User> getUsersDataFromFirebase(DatabaseReference reference) {
+        final ArrayList<User> list = new ArrayList<>();
+
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot snap : snapshot.getChildren()) {
+                    User user = new User();
+                    user.setName(snap.getValue(User.class).getName());
+                    user.setPhone(snap.getValue(User.class).getPhone());
+                    user.setEmail(snap.getValue(User.class).getEmail());
+                    user.setId(snap.getKey());
+                    list.add(user);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w(TAG, "loadPost:onCancelled", error.toException());
+            }
+        });
+
         return list;
     }
 }

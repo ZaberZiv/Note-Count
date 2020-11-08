@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.zivapp.notes.R;
 import com.zivapp.notes.databinding.ItemContactsBinding;
 import com.zivapp.notes.model.User;
-import com.zivapp.notes.views.groupnotes.ContactsListActivity;
+import com.zivapp.notes.views.contacts.ContactsListActivity;
 
 import java.util.ArrayList;
 
