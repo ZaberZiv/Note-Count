@@ -15,7 +15,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.zivapp.notes.R;
 import com.zivapp.notes.adapters.AdapterContacts;
-import com.zivapp.notes.adapters.SelectedUsersListener;
 import com.zivapp.notes.databinding.ActivityContactsListBinding;
 import com.zivapp.notes.firebase.FirebaseCallback;
 import com.zivapp.notes.firebase.FirebaseHelper;

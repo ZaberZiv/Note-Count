@@ -13,6 +13,7 @@ import com.zivapp.notes.R;
 import com.zivapp.notes.databinding.ItemContactsBinding;
 import com.zivapp.notes.model.User;
 import com.zivapp.notes.views.contacts.ContactsListActivity;
+import com.zivapp.notes.views.contacts.SelectedUsersListener;
 
 import java.util.ArrayList;
 
