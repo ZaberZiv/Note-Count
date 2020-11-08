@@ -18,73 +18,56 @@ import com.google.firebase.database.ValueEventListener;
 import com.zivapp.notes.R;
 import com.zivapp.notes.adapters.AdapterMenu;
 import com.zivapp.notes.databinding.ActivityMenuNotesBinding;
+import com.zivapp.notes.firebase.FirebaseCallback;
 import com.zivapp.notes.firebase.FirebaseHelper;
 import com.zivapp.notes.model.FormatSum;
 import com.zivapp.notes.model.MainMenuNote;
+import com.zivapp.notes.model.Note;
 import com.zivapp.notes.views.groupnotes.ContactsListActivity;
 import com.zivapp.notes.views.notes.NoteActivity;
+import com.zivapp.notes.views.notes.NoteContract;
 
 import java.util.ArrayList;
 
 /**
  * A ViewModel used for the {@link MenuNotesActivity}.
  */
-public class MenuPresenter {
+public class MenuPresenter implements MenuContract.Firebase, MenuContract.Presenter {
     private static final String TAG = "MenuPresenter";
 
     private Context context;
     private ActivityMenuNotesBinding mBinding;
     private RecyclerView mRecyclerView;
     private AdapterMenu mAdapter;
-    private ArrayList<MainMenuNote> mArrayList = new ArrayList<>();
+    private ArrayList<MainMenuNote> mMainMenuNoteList = new ArrayList<>();
+    private FirebaseCallback mFirebaseCallback;
 
     public MenuPresenter(final Context context, Activity activity) {
         this.context = context;
         mBinding = DataBindingUtil.setContentView(activity, R.layout.activity_menu_notes);
 
-        loadRecyclerView(mArrayList);
+        loadRecyclerView(mMainMenuNoteList);
         firebaseInstances();
         noteButton();
         groupNoteButton();
     }
 
     public void firebaseInstances() {
+        mFirebaseCallback = new FirebaseCallback(this, this);
         FirebaseHelper firebaseHelper = new FirebaseHelper();
         DatabaseReference totalDataReference = firebaseHelper.getTotalDataRefCurrentUser();
         totalDataReference.keepSynced(true);
-        getDataFromFirebase(totalDataReference);
+        mMainMenuNoteList = getDataFromFirebase(totalDataReference);
     }
 
-    public void getDataFromFirebase(DatabaseReference reference) {
-        mBinding.progressBar.setVisibility(View.VISIBLE);
+    public ArrayList<MainMenuNote> getDataFromFirebase(DatabaseReference reference) {
+        return mFirebaseCallback.getMenuNoteDataFromFirebase(reference);
+    }
 
-        ValueEventListener postListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                mArrayList.clear();
-
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    MainMenuNote mainMenuNote = new MainMenuNote();
-                    mainMenuNote.setTitle(snapshot.getValue(MainMenuNote.class).getTitle());
-                    mainMenuNote.setTotal_sum(snapshot.getValue(MainMenuNote.class).getTotal_sum());
-                    mainMenuNote.setDate(snapshot.getValue(MainMenuNote.class).getDate());
-                    mainMenuNote.setId(snapshot.getValue(MainMenuNote.class).getId());
-                    mainMenuNote.setGroup(snapshot.getValue(MainMenuNote.class).isGroup());
-                    mArrayList.add(mainMenuNote);
-                }
-
-                updateUI(mArrayList);
-                mBinding.setNote(new FormatSum(mArrayList.size()));
-                mBinding.progressBar.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Object failed, log a message
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-            }
-        };
-        reference.addValueEventListener(postListener);
+    @Override
+    public void updateNoteUI(ArrayList<MainMenuNote> list) {
+        updateUI(list);
+        mBinding.setNote(new FormatSum(list.size()));
     }
 
     private void loadRecyclerView(ArrayList<MainMenuNote> list) {
@@ -130,5 +113,15 @@ public class MenuPresenter {
                 context.startActivity(intent);
             }
         });
+    }
+
+    @Override
+    public void progressbarOn() {
+        mBinding.progressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void progressbarOff() {
+        mBinding.progressBar.setVisibility(View.GONE);
     }
 }

@@ -1,13 +1,17 @@
 package com.zivapp.notes.firebase;
 
 import android.util.Log;
+import android.view.Menu;
+import android.view.View;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.zivapp.notes.model.FormatSum;
 import com.zivapp.notes.model.MainMenuNote;
 import com.zivapp.notes.model.Note;
+import com.zivapp.notes.views.mainmenu.MenuContract;
 import com.zivapp.notes.views.notes.NoteContract;
 
 import java.util.ArrayList;
@@ -17,9 +21,16 @@ public class FirebaseCallback {
     private static final String TAG = "FirebaseCallback";
 
     private NoteContract.Firebase firebaseInterface;
+    private MenuContract.Firebase menuFirebaseInterface;
+    private MenuContract.Presenter menuPresenterInterface;
 
     public FirebaseCallback(NoteContract.Firebase firebaseInterface) {
         this.firebaseInterface = firebaseInterface;
+    }
+
+    public FirebaseCallback(MenuContract.Firebase menuFirebaseInterface, MenuContract.Presenter menuPresenterInterface) {
+        this.menuFirebaseInterface = menuFirebaseInterface;
+        this.menuPresenterInterface = menuPresenterInterface;
     }
 
     /**
@@ -81,5 +92,40 @@ public class FirebaseCallback {
         };
         reference.addValueEventListener(postListener);
         return mainMenuNote;
+    }
+
+    public ArrayList<MainMenuNote> getMenuNoteDataFromFirebase(DatabaseReference reference) {
+        menuPresenterInterface.progressbarOn();
+
+        final ArrayList<MainMenuNote> list = new ArrayList<>();
+
+        ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                list.clear();
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    MainMenuNote mainMenuNote = new MainMenuNote();
+                    mainMenuNote.setTitle(snapshot.getValue(MainMenuNote.class).getTitle());
+                    mainMenuNote.setTotal_sum(snapshot.getValue(MainMenuNote.class).getTotal_sum());
+                    mainMenuNote.setDate(snapshot.getValue(MainMenuNote.class).getDate());
+                    mainMenuNote.setId(snapshot.getValue(MainMenuNote.class).getId());
+                    mainMenuNote.setGroup(snapshot.getValue(MainMenuNote.class).isGroup());
+                    list.add(mainMenuNote);
+                }
+
+                menuFirebaseInterface.updateNoteUI(list);
+                menuPresenterInterface.progressbarOff();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Object failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        };
+        reference.addValueEventListener(postListener);
+
+        return list;
     }
 }
