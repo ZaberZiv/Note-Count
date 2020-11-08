@@ -19,6 +19,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.zivapp.notes.R;
 import com.zivapp.notes.adapters.AdapterNote;
 import com.zivapp.notes.databinding.ActivityNoteBinding;
+import com.zivapp.notes.firebase.FirebaseCallback;
 import com.zivapp.notes.firebase.FirebaseHelper;
 import com.zivapp.notes.model.FormatSum;
 import com.zivapp.notes.model.MainMenuNote;
@@ -36,7 +37,7 @@ import java.util.UUID;
 /**
  * A ViewModel used for the {@link NoteActivity}.
  */
-public class NotePresenter {
+public class NotePresenter implements NoteContract.Firebase {
     private static final String TAG = "NotePresenter";
 
     private Context context;
@@ -52,6 +53,7 @@ public class NotePresenter {
     private RecyclerView mRecyclerView;
     private AdapterNote mAdapter;
 
+    private FirebaseCallback mFirebaseCallback;
     private FirebaseHelper mFirebaseHelper;
     private DatabaseReference mNotesIDReference;
     private DatabaseReference mTotalDataReference;
@@ -71,6 +73,7 @@ public class NotePresenter {
 
     private void firebaseReferences() {
         mFirebaseHelper = new FirebaseHelper();
+        mFirebaseCallback = new FirebaseCallback(this);
 
         mNotesIDReference = mFirebaseHelper.getNotesReference();
         mTotalDataReference = mFirebaseHelper.getTotalDataRefCurrentUser();
@@ -131,65 +134,39 @@ public class NotePresenter {
      * Get all messages of this Note from firebase
      */
     private ArrayList<Note> getDataFromFirebase(DatabaseReference reference) {
-        final ArrayList<Note> noteList = new ArrayList<>();
+        return mFirebaseCallback.getDataFromFirebase(reference);
+    }
 
-        ValueEventListener postListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                noteList.clear();
-
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Note notes = new Note();
-                    notes.setUid(snapshot.getKey());
-                    notes.setMessage(snapshot.getValue(Note.class).getMessage());
-                    notes.setSum(snapshot.getValue(Note.class).getSum());
-                    notes.setId_note(snapshot.getValue(Note.class).getId_note());
-                    noteList.add(notes);
-                }
-                mTotalSum = getTotalSum(noteList, 0);
-                updateUI(noteList);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                // ...
-            }
-        };
-        reference.addValueEventListener(postListener);
-        return noteList;
+    /**
+     * NoteContract interface
+     * Realized in FirebaseCallback class
+     */
+    @Override
+    public void updateNoteUI(ArrayList<Note> noteList) {
+        mTotalSum = getTotalSum(noteList, 0);
+        updateUI(noteList);
     }
 
     /**
      * Get title of this Note from firebase
      */
     private MainMenuNote getTotalDataFromFirebase(DatabaseReference reference) {
-        final MainMenuNote mainMenuNote = new MainMenuNote();
-
-        ValueEventListener postListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                mainMenuNote.setTitle(dataSnapshot.getValue(MainMenuNote.class).getTitle());
-                mainMenuNote.setTotal_sum(dataSnapshot.getValue(MainMenuNote.class).getTotal_sum());
-                mainMenuNote.setDate(dataSnapshot.getValue(MainMenuNote.class).getDate());
-                mainMenuNote.setId(dataSnapshot.getValue(MainMenuNote.class).getId());
-
-                setMainMenuNoteDataInLayout(mainMenuNote);
-                changeFocusIfTitleExist(mainMenuNote);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                // ...
-            }
-        };
-        reference.addValueEventListener(postListener);
-        return mainMenuNote;
+        return mFirebaseCallback.getTotalDataFromFirebase(reference);
     }
 
+    /**
+     * NoteContract interface
+     * Realized in FirebaseCallback class
+     */
+    @Override
+    public void workWithTotalData(MainMenuNote mainMenuNote) {
+        setMainMenuNoteDataInLayout(mainMenuNote);
+        changeFocusIfTitleExist(mainMenuNote);
+    }
+
+    /**
+     * update XML file
+     */
     private void setMainMenuNoteDataInLayout(MainMenuNote mainMenuNote) {
         mBinding.setMainNote(mainMenuNote);
     }
