@@ -6,7 +6,8 @@
         android:textAlignment="center"
         android:text="@string/empty_list_text"
         android:layout_below="@+id/image_non_data"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
+        android:layout_centerHorizontal="true"
         android:layout_height="wrap_content"/>
 
     <ImageView

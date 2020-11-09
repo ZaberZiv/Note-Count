@@ -4,7 +4,7 @@
 
     <string name="total_notes">Total notes:</string>
     <string name="image_descr">Empty list of notes</string>
-    <string name="empty_list_text">There is nothing to show you. \n
+    <string name="empty_list_text">There is nothing to show you.
         Please add new note by pressing green buttons below.</string>
     <string name="no_data">Please add both Sum and Name of operation</string>
     <string name="image_descr_no_contacts">No contacts</string>
