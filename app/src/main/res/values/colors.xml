@@ -5,8 +5,8 @@
     <color name="colorAccent">#03DAC5</color>
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
-    <color name="grey">#616060</color>
-    <color name="item_color">#75C1D5</color>
+    <color name="grey">#D5D4D4</color>
+    <color name="item_color">#B5EAF8</color>
     <color name="card_color">#FFEB3B</color>
     <color name="background_main">#FFE2F8</color>
 </resources>

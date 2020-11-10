@@ -12,10 +12,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 import com.zivapp.notes.R;
 import com.zivapp.notes.adapters.AdapterNote;
 import com.zivapp.notes.databinding.ActivityNoteBinding;
@@ -31,7 +28,6 @@ import com.zivapp.notes.util.UtilIntent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -55,8 +51,6 @@ public class NotePresenter implements NoteContract.Firebase {
 
     private FirebaseCallback mFirebaseCallback;
     private FirebaseHelper mFirebaseHelper;
-    private DatabaseReference mNotesIDReference;
-    private DatabaseReference mTotalDataReference;
 
     public NotePresenter(Context context, Activity activity) {
         this.context = context;
@@ -74,20 +68,18 @@ public class NotePresenter implements NoteContract.Firebase {
     private void firebaseReferences() {
         mFirebaseHelper = new FirebaseHelper();
         mFirebaseCallback = new FirebaseCallback(this);
-
-        mNotesIDReference = mFirebaseHelper.getNotesReference();
-        mTotalDataReference = mFirebaseHelper.getTotalDataRefCurrentUser();
-
-        mNotesIDReference.keepSynced(true);
-        mTotalDataReference.keepSynced(true);
     }
 
     private DatabaseReference getNoteRef(String id) {
-        return mNotesIDReference.child(id);
+        DatabaseReference reference = mFirebaseHelper.getCurrentNoteReference(id);
+        reference.keepSynced(true);
+        return reference;
     }
 
     private DatabaseReference getTotalDataRef(String id) {
-        return mTotalDataReference.child(id);
+        DatabaseReference reference = mFirebaseHelper.getTotalDataRefCurrentNote(id);
+        reference.keepSynced(true);
+        return reference;
     }
 
     private void saveTotalData(String id, MainMenuNote mainMenuNote) {
@@ -168,7 +160,7 @@ public class NotePresenter implements NoteContract.Firebase {
      * update XML file
      */
     private void setMainMenuNoteDataInLayout(MainMenuNote mainMenuNote) {
-        mBinding.setMainNote(mainMenuNote);
+        mBinding.toolbar.setMainNote(mainMenuNote);
     }
 
     /**
@@ -176,7 +168,7 @@ public class NotePresenter implements NoteContract.Firebase {
      */
     private void changeFocusIfTitleExist(MainMenuNote mainMenuNote) {
         if (mainMenuNote.getTitle() == null) return;
-        if (!mainMenuNote.getTitle().equals("")) mBinding.etNameOperation.requestFocus();
+        if (!mainMenuNote.getTitle().equals("")) mBinding.includeInterface.etNameOperation.requestFocus();
     }
 
     /**
@@ -196,7 +188,7 @@ public class NotePresenter implements NoteContract.Firebase {
      * set formated total sum
      */
     private void setFormatTotalSum(int totalSum) {
-        mBinding.setFormat(new FormatSum(UtilConverter.customStringFormat(totalSum)));
+        mBinding.toolbar.setFormat(new FormatSum(UtilConverter.customStringFormat(totalSum)));
     }
 
     /**
@@ -206,13 +198,13 @@ public class NotePresenter implements NoteContract.Firebase {
      * EditText initialized here and made some work with it.
      */
     private void addNewNoteItem() {
-        final EditText editTextTitleName = mBinding.etNoteTitleName;
-        final EditText editTextName = mBinding.etNameOperation;
-        final EditText editTextPrice = mBinding.etPriceOperation;
+        final EditText editTextTitleName = mBinding.toolbar.etNoteTitleName;
+        final EditText editTextName = mBinding.includeInterface.etNameOperation;
+        final EditText editTextPrice = mBinding.includeInterface.etPriceOperation;
         editTextTitleName.requestFocus();
 
         // Add button
-        mBinding.buttonAddNewItem.setOnClickListener(new View.OnClickListener() {
+        mBinding.includeInterface.buttonAddNewItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -313,7 +305,7 @@ public class NotePresenter implements NoteContract.Firebase {
     }
 
     public String getTitleName() {
-        return mTitleName = mBinding.etNoteTitleName.getText().toString().trim();
+        return mTitleName = mBinding.toolbar.etNoteTitleName.getText().toString().trim();
     }
 
     public void setTitleName(String mTitleName) {

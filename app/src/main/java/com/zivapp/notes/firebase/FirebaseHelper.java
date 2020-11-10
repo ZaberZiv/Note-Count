@@ -47,10 +47,14 @@ public class FirebaseHelper {
      * Branch methods
      */
     // "Notes" branch
+    // Get all notes reference of current user
     public DatabaseReference getNotesReference() {
         return getDatabaseReference().child(NOTES).child(getFirebaseUser().getUid());
     }
-
+    // Get current Note reference of current user
+    public DatabaseReference getCurrentNoteReference(String id) {
+        return getNotesReference().child(id);
+    }
 
     // "Total Data" branch
     public DatabaseReference getTotalDataReference() {
@@ -63,6 +67,10 @@ public class FirebaseHelper {
     // "Total Data" reference of current User
     public DatabaseReference getTotalDataRefCurrentUser() {
         return getTotalDataReference().child(getFirebaseUser().getUid());
+    }
+    // Get total data reference of current note of current User
+    public DatabaseReference getTotalDataRefCurrentNote(String id) {
+        return getTotalDataRefCurrentUser().child(id);
     }
     // Saving data of current user to the branch "Total Data" -> note id -> data
     public void saveTotalDataCurrentUser(String id, MainMenuNote mainMenuNote) {

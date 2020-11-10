@@ -10,17 +10,16 @@
 
         <include
             android:id="@+id/toolbar"
+            layout="@layout/include_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            layout="@layout/include_toolbar" />
+            android:layout_height="wrap_content" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_groups"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/toolbar"
-            android:layout_above="@+id/include_interface"/>
-
+            android:layout_above="@+id/include_interface"
+            android:layout_below="@+id/toolbar" />
 
         <include
             android:id="@+id/include_interface"
