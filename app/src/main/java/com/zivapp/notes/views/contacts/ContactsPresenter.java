@@ -129,12 +129,12 @@ public class ContactsPresenter implements SelectedUsersListener {
 
                 // this cycle is for adding data to other members roots
                 for (User user : listUsers) {
-                    // adding users to the Group | "Groups" -> group id -> "members" -> member uID -> value (true)
-                    mFirebaseHelper.getGroupMembersReference(mGroupIDReference, user.getId()).setValue(true);
+                    // adding users to the Group | "Groups" -> group id -> "members" -> member uID -> value (false - for group members)
+                    mFirebaseHelper.getGroupMembersReference(mGroupIDReference, user.getId()).setValue(false);
                     Log.v(TAG, "User: " + user.getName() + ", id: " + user.getId());
                     // adding group key to the members
-                    // "users" -> member uID -> "Group" -> group key -> value (true)
-                    getReferenceUserGroup(user.getId()).child(getGroupKey()).setValue(true);
+                    // "users" -> member uID -> "Group" -> group key -> value (false - for group members)
+                    getReferenceUserGroup(user.getId()).child(getGroupKey()).setValue(false);
                     Log.v(TAG, "mGroupIDReference KEY: " + getGroupKey());
                 }
 
@@ -151,7 +151,7 @@ public class ContactsPresenter implements SelectedUsersListener {
         FirebaseUser user = mFirebaseHelper.getFirebaseUser();
         // Generate new key for Group
         mGroupIDReference = mFirebaseHelper.getGroupsReference().push();
-        // add current user to the members root | "Groups" -> group id -> "members" -> user uID -> value (true)
+        // add current user to the members root | "Groups" -> group id -> "members" -> user uID -> value (true - for group leader)
         mFirebaseHelper.getGroupMembersReference(mGroupIDReference, user.getUid()).setValue(true);
         // reference to current user
         mUserReference = getReferenceUserGroup(user.getUid());
