@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.cardview.widget.CardView;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,6 +27,7 @@ import com.zivapp.notes.databinding.ItemGroupNoteBinding;
 import com.zivapp.notes.model.FormatSum;
 import com.zivapp.notes.model.User;
 import com.zivapp.notes.util.UtilConverter;
+import com.zivapp.notes.views.groupnotes.GroupContract;
 import com.zivapp.notes.views.groupnotes.GroupNoteActivity;
 
 import java.util.ArrayList;
@@ -39,20 +41,22 @@ public class AdapterGroupItem extends RecyclerView.Adapter<RecyclerView.ViewHold
     private static final int TYPE_USER = 1;
     private static final int TYPE_MEMBER = 2;
     private ArrayList<GroupNote> list;
-    private Activity activity;
+    private final Activity activity;
+    private final GroupContract.Adapter groupContract;
 
-    public AdapterGroupItem(ArrayList<GroupNote> list, Activity activity) {
+    public AdapterGroupItem(ArrayList<GroupNote> list, Activity activity, GroupContract.Adapter groupContract) {
         this.list = list;
         this.activity = activity;
+        this.groupContract = groupContract;
     }
 
     public void setNoteList(ArrayList<GroupNote> list) {
         this.list = list;
     }
 
-    public static class ItemViewHolder extends RecyclerView.ViewHolder {
+    public class ItemViewHolder extends RecyclerView.ViewHolder {
 
-        private ItemGroupNoteBinding binding;
+        private final ItemGroupNoteBinding binding;
 
         public ItemViewHolder(@NonNull ItemGroupNoteBinding binding) {
             super(binding.getRoot());
@@ -66,11 +70,43 @@ public class AdapterGroupItem extends RecyclerView.Adapter<RecyclerView.ViewHold
             String formated_sum = UtilConverter.customStringFormat(note.getSum());
             binding.setFormat(new FormatSum(formated_sum));
         }
+
+        // Removing item data from recyclerView and firebase
+        public void alert(final ArrayList<GroupNote> list, final int position) {
+            binding.cardViewItem.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+
+                    new AlertDialog.Builder(activity)
+                            .setIcon(android.R.drawable.ic_notification_clear_all)
+                            .setTitle(R.string.task_title)
+                            .setMessage(R.string.task_message)
+                            .setPositiveButton(R.string.task_positive_btn, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Log.v(TAG, "REMOVING NOTE - id_note: " + list.get(position).getId_note()
+                                            + " Uid: " + list.get(position).getUid());
+
+                                    String ID = groupContract.getCurrentNoteID();
+                                    new FirebaseHelper().deleteGroupItemFromFirebase(list, position, ID);
+
+                                    list.remove(position);
+                                    notifyItemRemoved(position);
+                                    Toast.makeText(activity, R.string.task_toast, Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .setNegativeButton(R.string.task_negative_btn, null)
+                            .show();
+
+                    return false;
+                }
+            });
+        }
     }
 
     public static class MemberViewHolder extends RecyclerView.ViewHolder {
 
-        private ItemGroupMembersBinding binding;
+        private final ItemGroupMembersBinding binding;
 
         public MemberViewHolder(@NonNull ItemGroupMembersBinding binding) {
             super(binding.getRoot());
@@ -90,14 +126,13 @@ public class AdapterGroupItem extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         if (viewType == TYPE_USER) { // for user layout
-            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
             ItemGroupNoteBinding binding = DataBindingUtil.inflate(inflater,
                     R.layout.item_group_note, parent, false);
             return new ItemViewHolder(binding);
 
         } else { // for member layout
-            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
             ItemGroupMembersBinding binding = DataBindingUtil.inflate(inflater,
                     R.layout.item_group_members, parent, false);
             return new MemberViewHolder(binding);
@@ -109,54 +144,10 @@ public class AdapterGroupItem extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         if (getItemViewType(position) == TYPE_USER) {
             ((ItemViewHolder) holder).setUserDetails(list.get(position));
+            ((ItemViewHolder) holder).alert(list, position);
         } else {
             ((MemberViewHolder) holder).setMembersDetails(list.get(position));
         }
-
-//        // TODO: one click for change settings
-//        holder.binding.cardViewItem.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Log.v(TAG, "POSITION ITEM: " + position + " and id: " + list.get(position).getUid());
-//
-//            }
-//        });
-
-//        // Removing item data from recyclerView and table (notes_table);
-//        holder.binding.cardViewItem.setOnLongClickListener(new View.OnLongClickListener() {
-//            @Override
-//            public boolean onLongClick(View v) {
-//
-//                new AlertDialog.Builder(activity)
-//                        .setIcon(android.R.drawable.ic_notification_clear_all)
-//                        .setTitle(R.string.task_title)
-//                        .setMessage(R.string.task_message)
-//                        .setPositiveButton(R.string.task_positive_btn, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                Log.v(TAG, "REMOVING NOTE: " + list.get(position)
-//                                        + " Uid: " + list.get(position).getUid());
-//
-//                                FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
-//                                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-//                                // TODO: add an message id to remove one item
-////                                databaseReference.child("Notes")
-////                                        .child(mUser.getUid())
-////                                        .child(list.get(position).getId_note())
-////                                        .child(list.get(position).getUid())
-////                                        .removeValue();
-//
-//                                list.remove(position);
-//                                notifyItemRemoved(position);
-//                                Toast.makeText(activity, R.string.task_toast, Toast.LENGTH_SHORT).show();
-//                            }
-//                        })
-//                        .setNegativeButton(R.string.task_negative_btn, null)
-//                        .show();
-//
-//                return false;
-//            }
-//        });
     }
 
     @Override

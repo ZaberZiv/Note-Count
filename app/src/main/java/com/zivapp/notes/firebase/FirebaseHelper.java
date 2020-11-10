@@ -4,6 +4,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.zivapp.notes.model.GroupNote;
 import com.zivapp.notes.model.MainMenuNote;
 import com.zivapp.notes.model.Note;
 
@@ -146,13 +147,6 @@ public class FirebaseHelper {
                 .child(list.get(position).getId())
                 .removeValue();
     }
-    // Removing data from Firebase in NoteActivity
-    public void deleteNoteFromFirebase(ArrayList<Note> list, int position) {
-        getNotesReference()
-                .child(list.get(position).getId_note())
-                .child(list.get(position).getUid())
-                .removeValue();
-    }
     // Removing Group data from Firebase in MenuNotesActivity
     public void deleteGroupNoteFromFirebase(ArrayList<MainMenuNote> list, int position) {
         getTotalDataRefCurrentUser()
@@ -167,6 +161,19 @@ public class FirebaseHelper {
         getGroupReferenceByID(list.get(position).getId())
                 .child(MEMBERS)
                 .child(getFirebaseUser().getUid())
+                .removeValue();
+    }
+    // Removing item data from Firebase in NoteActivity
+    public void deleteNoteFromFirebase(ArrayList<Note> list, int position) {
+        getNotesReference()
+                .child(list.get(position).getId_note())
+                .child(list.get(position).getUid())
+                .removeValue();
+    }
+    // Removing item data from Firebase in GroupNoteActivity
+    public void deleteGroupItemFromFirebase(ArrayList<GroupNote> list, int position, String id) {
+        getGroupNoteReference(id)
+                .child(list.get(position).getId_note())
                 .removeValue();
     }
 }

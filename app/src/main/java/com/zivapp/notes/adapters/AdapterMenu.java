@@ -73,8 +73,8 @@ public class AdapterMenu extends RecyclerView.Adapter<AdapterMenu.NoteViewHolder
         holder.binding.setNote(note);
 
         // If User didn't set title name the "New note" will be added by default
-        String name = "New Note " + list.size();
-        holder.binding.setItem(new Note(name));
+        String defaultName = "New Note " + (position + 1);
+        holder.binding.setItem(new Note(defaultName));
 
         // Binding formated total sum to XML file: item_main_menu.xml
         String formated_total_sum = UtilConverter.customStringFormat(list.get(position).getTotal_sum());

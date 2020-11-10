@@ -33,7 +33,7 @@ import com.zivapp.notes.util.UtilIntent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GroupPresenter implements GroupContract.Firebase {
+public class GroupPresenter implements GroupContract.Firebase, GroupContract.Adapter {
 
     private static final String TAG = "GroupPresenter";
     private ArrayList<GroupNote> mNoteList = new ArrayList<>();
@@ -182,13 +182,13 @@ public class GroupPresenter implements GroupContract.Firebase {
                         StaggeredGridLayoutManager.VERTICAL)
         );
 
-        mAdapter = new AdapterGroupItem(list, activity);
+        mAdapter = new AdapterGroupItem(list, activity, this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
     void updateUI(ArrayList<GroupNote> list) {
         if (mAdapter == null) {
-            mAdapter = new AdapterGroupItem(list, activity);
+            mAdapter = new AdapterGroupItem(list, activity, this);
             mRecyclerView.setAdapter(mAdapter);
         } else {
             mAdapter.setNoteList(list);
@@ -349,5 +349,10 @@ public class GroupPresenter implements GroupContract.Firebase {
         if (mainMenuNote == null) return;
         if (!mainMenuNote.getTitle().equals(""))
             mBinding.includeInterface.etNameOperation.requestFocus();
+    }
+
+    @Override
+    public String getCurrentNoteID() {
+        return ID;
     }
 }

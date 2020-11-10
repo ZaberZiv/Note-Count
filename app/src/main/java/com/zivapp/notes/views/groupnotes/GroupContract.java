@@ -11,4 +11,8 @@ public interface GroupContract {
         void updateGroupNoteUI(ArrayList<GroupNote> list);
         void updateTotalDataUI(MainMenuNote mainMenuNote);
     }
+
+    interface Adapter {
+        String getCurrentNoteID();
+    }
 }
