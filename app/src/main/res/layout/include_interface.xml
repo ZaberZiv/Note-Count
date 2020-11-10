@@ -24,7 +24,7 @@
                 android:background="@drawable/edit_text_style"
                 android:hint="@string/hint_text"
                 android:importantForAutofill="no"
-                android:inputType="textCapWords"
+                android:inputType="textCapSentences"
                 android:maxLength="30" />
 
             <EditText

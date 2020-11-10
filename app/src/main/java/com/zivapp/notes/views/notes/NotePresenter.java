@@ -161,6 +161,7 @@ public class NotePresenter implements NoteContract.Firebase {
      */
     private void setMainMenuNoteDataInLayout(MainMenuNote mainMenuNote) {
         mBinding.toolbar.setMainNote(mainMenuNote);
+        mBinding.setMainNote(mainMenuNote);
     }
 
     /**
@@ -263,22 +264,25 @@ public class NotePresenter implements NoteContract.Firebase {
         Log.v(TAG, "saveMainMenuNoteData()");
 
         getTitleName();
+        String message = getMessage();
+        Log.v(TAG, "save message: " + message);
 
         if (mTotalSum != 0) {
             Log.v(TAG, "DATA SAVED for the first time!");
-            saveData();
+            saveData(message);
         } else {
             Log.v(TAG, "Empty note haven't saved!");
         }
     }
 
-    private void saveData() {
+    private void saveData(String message) {
         MainMenuNote mainMenuNote = new MainMenuNote();
         mainMenuNote.setDate(mDate);
         mainMenuNote.setTitle(mTitleName);
         mainMenuNote.setTotal_sum(mTotalSum);
         mainMenuNote.setId(ID);
         mainMenuNote.setGroup(false);
+        mainMenuNote.setMessage(message);
         saveTotalData(ID, mainMenuNote);
     }
 
@@ -290,14 +294,17 @@ public class NotePresenter implements NoteContract.Firebase {
 
         getTitleName();
 
+        String message = getMessage();
+        Log.v(TAG, "update message: " + message);
+
         // If title or total sum has changed than update data
-        if (mMainMenuNote.getTitle() == null) {
+        if (mMainMenuNote.getTitle() == null || !message.equals(mMainMenuNote.getMessage())) {
             Log.v(TAG, "mainMenuNote is NULL");
-            saveData();
+            saveData(message);
 
         } else if (!mMainMenuNote.getTitle().equals(mTitleName) || mMainMenuNote.getTotal_sum() != mTotalSum) {
             Log.v(TAG, "DATA UPDATED");
-            saveData();
+            saveData(message);
 
         } else {
             Log.v(TAG, "Note haven't changed!");
@@ -306,6 +313,10 @@ public class NotePresenter implements NoteContract.Firebase {
 
     public String getTitleName() {
         return mTitleName = mBinding.toolbar.etNoteTitleName.getText().toString().trim();
+    }
+
+    public String getMessage() {
+        return mBinding.editTextMessage.getText().toString().trim();
     }
 
     public void setTitleName(String mTitleName) {

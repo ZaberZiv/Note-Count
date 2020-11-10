@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -7,9 +8,6 @@
             name="main_note"
             type="com.zivapp.notes.model.MainMenuNote" />
 
-        <variable
-            name="format"
-            type="com.zivapp.notes.model.FormatSum" />
     </data>
 
     <RelativeLayout
@@ -19,16 +17,40 @@
 
         <include
             android:id="@+id/toolbar"
+            layout="@layout/include_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            layout="@layout/include_toolbar" />
+            android:layout_below="@+id/toolbar"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="12dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="12dp">
+
+            <EditText
+                android:id="@+id/edit_text_message"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"
+                android:lines="2"
+                android:maxLines="4"
+                android:inputType="textCapSentences"
+                android:maxLength="140"
+                android:text="@{main_note.message}" />
+
+        </androidx.cardview.widget.CardView>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_creation"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/include_interface"
-            android:layout_below="@+id/toolbar" />
+            android:layout_below="@+id/card_message" />
 
         <include
             android:id="@+id/include_interface"

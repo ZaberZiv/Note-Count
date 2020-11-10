@@ -7,6 +7,7 @@ public class MainMenuNote {
     private String title;
     private int total_sum;
     private boolean group;
+    private String message;
 
     public MainMenuNote() {
     }
@@ -69,5 +70,13 @@ public class MainMenuNote {
 
     public void setGroup(boolean group) {
         this.group = group;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

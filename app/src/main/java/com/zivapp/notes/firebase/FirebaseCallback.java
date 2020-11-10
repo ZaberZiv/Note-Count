@@ -129,6 +129,7 @@ public class FirebaseCallback {
                 mainMenuNote.setTotal_sum(dataSnapshot.getValue(MainMenuNote.class).getTotal_sum());
                 mainMenuNote.setDate(dataSnapshot.getValue(MainMenuNote.class).getDate());
                 mainMenuNote.setId(dataSnapshot.getValue(MainMenuNote.class).getId());
+                mainMenuNote.setMessage(dataSnapshot.getValue(MainMenuNote.class).getMessage());
 
                 firebaseInterface.workWithTotalData(mainMenuNote);
             }
