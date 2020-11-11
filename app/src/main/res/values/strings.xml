@@ -13,6 +13,7 @@
     <string name="hint_name">Note name</string>
     <string name="hint_text">Add text</string>
     <string name="hint_price">Add price</string>
+    <string name="hint_message">Some hints for this note</string>
 
     <string name="btn_add">Add</string>
     <string name="btn_group_note">Group note</string>

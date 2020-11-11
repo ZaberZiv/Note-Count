@@ -222,6 +222,8 @@ public class FirebaseCallback {
                 mainMenuNote.setTotal_sum(dataSnapshot.getValue(MainMenuNote.class).getTotal_sum());
                 mainMenuNote.setId(dataSnapshot.getValue(MainMenuNote.class).getId());
                 mainMenuNote.setDate(dataSnapshot.getValue(MainMenuNote.class).getDate());
+                mainMenuNote.setMessage(dataSnapshot.getValue(MainMenuNote.class).getMessage());
+                mainMenuNote.setGroup(dataSnapshot.getValue(MainMenuNote.class).isGroup());
 
                 groupFirebaseInterface.updateTotalDataUI(mainMenuNote);
             }

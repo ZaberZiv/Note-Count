@@ -161,7 +161,7 @@ public class NotePresenter implements NoteContract.Firebase {
      */
     private void setMainMenuNoteDataInLayout(MainMenuNote mainMenuNote) {
         mBinding.toolbar.setMainNote(mainMenuNote);
-        mBinding.setMainNote(mainMenuNote);
+        mBinding.includeHintMessage.setMainNote(mainMenuNote);
     }
 
     /**
@@ -293,7 +293,6 @@ public class NotePresenter implements NoteContract.Firebase {
         Log.v(TAG, "updateMainMenuNoteData()");
 
         getTitleName();
-
         String message = getMessage();
         Log.v(TAG, "update message: " + message);
 
@@ -316,7 +315,7 @@ public class NotePresenter implements NoteContract.Firebase {
     }
 
     public String getMessage() {
-        return mBinding.editTextMessage.getText().toString().trim();
+        return mBinding.includeHintMessage.editTextMessage.getText().toString().trim();
     }
 
     public void setTitleName(String mTitleName) {

@@ -253,13 +253,14 @@ public class GroupPresenter implements GroupContract.Firebase, GroupContract.Ada
         Log.v(TAG, "saveMainMenuNoteData()");
 
         getCurrentData();
+        String message = getMessage();
 
         if (mTotalSum != 0) {
             Log.v(TAG, "DATA SAVED for the first time!");
             Log.v(TAG, "saveMainMenuNoteData() *** DATE: " + mDate + "; Title: "
                     + mTitleName + "; TotalSUm: " + mTotalSum + "; ID: " + ID);
 
-            saveTotalData();
+            saveTotalData(message);
 
         } else {
             Log.v(TAG, "Empty note haven't saved!");
@@ -273,12 +274,12 @@ public class GroupPresenter implements GroupContract.Firebase, GroupContract.Ada
         Log.v(TAG, "updateMainMenuNoteData()");
 
         getCurrentData();
-
+        String message = getMessage();
         // If title or total sum has changed than update data
-        if (mMainMenuNote.getTitle() == null) {
+        if (mMainMenuNote.getTitle() == null || !message.equals(mMainMenuNote.getMessage())) {
             Log.v(TAG, "mMainMenuNote is NULL");
 
-            saveTotalData();
+            saveTotalData(message);
 
         } else if (!mMainMenuNote.getTitle().equals(mTitleName)
                 || mMainMenuNote.getTotal_sum() != mTotalSum) {
@@ -286,15 +287,21 @@ public class GroupPresenter implements GroupContract.Firebase, GroupContract.Ada
             Log.v(TAG, "updateMainMenuNoteData() *** DATE: " + mDate + "; Title: "
                     + mTitleName + "; TotalSUm: " + mTotalSum + "; ID: " + ID);
 
-            saveTotalData();
+            saveTotalData(message);
 
         } else {
             Log.v(TAG, "Note haven't changed!");
         }
     }
 
-    void saveTotalData() {
-        MainMenuNote mainMenuNote = new MainMenuNote(mDate, mTitleName, mTotalSum, ID, true);
+    void saveTotalData(String message) {
+        MainMenuNote mainMenuNote = new MainMenuNote();
+        mainMenuNote.setDate(mDate);
+        mainMenuNote.setTitle(mTitleName);
+        mainMenuNote.setTotal_sum(mTotalSum);
+        mainMenuNote.setId(ID);
+        mainMenuNote.setGroup(true);
+        mainMenuNote.setMessage(message);
 
         // Saving data of members to the branch "Total Data" -> member id -> note id -> data
         for (User user : mMembersList) {
@@ -340,6 +347,7 @@ public class GroupPresenter implements GroupContract.Firebase, GroupContract.Ada
 
     private void setMainMenuNoteDataInLayout(MainMenuNote mainMenuNote) {
         mBinding.toolbar.setMainNote(mainMenuNote);
+        mBinding.includeHintMessage.setMainNote(mainMenuNote);
     }
 
     /**
@@ -354,5 +362,9 @@ public class GroupPresenter implements GroupContract.Firebase, GroupContract.Ada
     @Override
     public String getCurrentNoteID() {
         return ID;
+    }
+
+    public String getMessage() {
+        return mBinding.includeHintMessage.editTextMessage.getText().toString().trim();
     }
 }

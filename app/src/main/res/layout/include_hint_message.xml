@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="main_note"
+            type="com.zivapp.notes.model.MainMenuNote" />
+
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="12dp">
+
+        <EditText
+            android:id="@+id/edit_text_message"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="4dp"
+            android:autofillHints="no"
+            android:gravity="start"
+            android:hint="@string/hint_message"
+            android:inputType="text|textMultiLine|textCapSentences"
+            android:maxLength="100"
+            android:maxLines="5"
+            android:text="@{main_note.message}" />
+    </androidx.cardview.widget.CardView>
+</layout>
