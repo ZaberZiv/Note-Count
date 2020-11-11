@@ -79,13 +79,13 @@ public class GroupPresenter implements GroupContract.Firebase, GroupContract.Ada
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
 
-                    if (!dataSnapshot.getValue(Note.class).getUid()
+                    if (!dataSnapshot.getValue(GroupNote.class).getUid()
                             .equals(new FirebaseHelper().getFirebaseUser().getUid())) {
                         GroupNote notes = new GroupNote();
                         notes.setId_note(dataSnapshot.getKey());
-                        notes.setUid(dataSnapshot.getValue(Note.class).getUid());
-                        notes.setMessage(dataSnapshot.getValue(Note.class).getMessage());
-                        notes.setSum(dataSnapshot.getValue(Note.class).getSum());
+                        notes.setUid(dataSnapshot.getValue(GroupNote.class).getUid());
+                        notes.setMessage(dataSnapshot.getValue(GroupNote.class).getMessage());
+                        notes.setSum(dataSnapshot.getValue(GroupNote.class).getSum());
                         notes.setMember(dataSnapshot.getValue(GroupNote.class).getMember());
                         notes.setDate(dataSnapshot.getValue(GroupNote.class).getDate());
                         notifications.notifyNewMessages(notes);

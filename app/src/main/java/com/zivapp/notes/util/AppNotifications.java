@@ -13,14 +13,12 @@ import androidx.core.app.NotificationManagerCompat;
 import com.zivapp.notes.R;
 import com.zivapp.notes.model.GroupNote;
 import com.zivapp.notes.views.groupnotes.GroupNoteActivity;
+import com.zivapp.notes.views.mainmenu.MenuNotesActivity;
 
 public class AppNotifications {
     //TODO: change the ID
     private static final String CHANNEL_ID = "101";
     private int notificationId = 202;
-    //TODO: change the text in variables
-    private String textTitle = "New Message";
-    private String textContent = "This is text content, some text from messages goes here";
 
     private final Context context;
 
@@ -30,7 +28,8 @@ public class AppNotifications {
 
     public void notifyNewMessages(GroupNote note) {
         // Create an explicit intent for an Activity in your app
-        Intent intent = new Intent(context, GroupNoteActivity.class);
+        Intent intent = new Intent(context, MenuNotesActivity.class);
+//        intent.putExtra("id_note", note.getUid());
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 

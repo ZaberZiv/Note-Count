@@ -187,9 +187,9 @@ public class FirebaseCallback {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     GroupNote notes = new GroupNote();
                     notes.setId_note(snapshot.getKey());
-                    notes.setUid(snapshot.getValue(Note.class).getUid());
-                    notes.setMessage(snapshot.getValue(Note.class).getMessage());
-                    notes.setSum(snapshot.getValue(Note.class).getSum());
+                    notes.setUid(snapshot.getValue(GroupNote.class).getUid());
+                    notes.setMessage(snapshot.getValue(GroupNote.class).getMessage());
+                    notes.setSum(snapshot.getValue(GroupNote.class).getSum());
                     notes.setMember(snapshot.getValue(GroupNote.class).getMember());
                     notes.setDate(snapshot.getValue(GroupNote.class).getDate());
                     noteList.add(notes);
