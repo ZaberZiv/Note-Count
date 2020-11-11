@@ -88,7 +88,7 @@ public class NotePresenter implements NoteContract.Firebase {
 
     public void shareData() {
         UtilIntent.shareDataByIntent(context,
-                ShareData.formatStringData(mNoteList, mMainMenuNote.getTitle()));
+                ShareData.formatStringData(mNoteList, mMainMenuNote));
     }
 
     /**

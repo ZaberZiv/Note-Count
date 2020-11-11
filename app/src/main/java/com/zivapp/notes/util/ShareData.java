@@ -1,6 +1,7 @@
 package com.zivapp.notes.util;
 
 import com.zivapp.notes.model.GroupNote;
+import com.zivapp.notes.model.MainMenuNote;
 import com.zivapp.notes.model.Note;
 
 import java.util.ArrayList;
@@ -13,11 +14,10 @@ public class ShareData {
     private static final String TOTAL_SUM = "Общая сумма";
     private static final String CURRENCY_KZ = ": KZT ";
 
-    public static String formatStringData(ArrayList<Note> list, String title) {
+    public static String formatStringData(ArrayList<Note> list, MainMenuNote totalData) {
         StringBuilder stringBuilder = new StringBuilder();
-        int total_sum = 0;
 
-        stringBuilder = getAppName(stringBuilder, title);
+        stringBuilder = getAppName(stringBuilder, totalData.getTitle());
 
         for (Note note : list) {
             stringBuilder
@@ -25,20 +25,17 @@ public class ShareData {
                     .append(CURRENCY_KZ)
                     .append(UtilConverter.customStringFormat(note.getSum()))
                     .append("\n");
-
-            total_sum += note.getSum();
         }
 
-        stringBuilder = getTotalSum(stringBuilder, total_sum);
+        stringBuilder = getTotalSum(stringBuilder, totalData.getTotal_sum());
 
         return stringBuilder.toString();
     }
 
-    public static String formatStringDataGroup(ArrayList<GroupNote> list, String title) {
+    public static String formatStringDataGroup(ArrayList<GroupNote> list, MainMenuNote totalData) {
         StringBuilder stringBuilder = new StringBuilder();
-        int total_sum = 0;
 
-        stringBuilder = getAppName(stringBuilder, title);
+        stringBuilder = getAppName(stringBuilder, totalData.getTitle());
 
         for (GroupNote note : list) {
             stringBuilder
@@ -48,11 +45,9 @@ public class ShareData {
                     .append(CURRENCY_KZ)
                     .append(UtilConverter.customStringFormat(note.getSum()))
                     .append("\n");
-
-            total_sum += note.getSum();
         }
 
-        stringBuilder = getTotalSum(stringBuilder, total_sum);
+        stringBuilder = getTotalSum(stringBuilder, totalData.getTotal_sum());
 
         return stringBuilder.toString();
     }

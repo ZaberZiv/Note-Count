@@ -317,7 +317,7 @@ public class GroupPresenter implements GroupContract.Firebase, GroupContract.Ada
 
     void shareData() {
         UtilIntent.shareDataByIntent(activity,
-                ShareData.formatStringDataGroup(mNoteList, mMainMenuNote.getTitle()));
+                ShareData.formatStringDataGroup(mNoteList, mMainMenuNote));
     }
 
     void getCurrentData() {
