@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.zivapp.notes.R;
 import com.zivapp.notes.firebase.FirebaseHelper;
+import com.zivapp.notes.util.AppNotifications;
 import com.zivapp.notes.views.login.LoginActivity;
 import com.zivapp.notes.views.mainmenu.MenuNotesActivity;
 
@@ -24,6 +25,8 @@ public class SplashScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash_screen);
 
         final FirebaseHelper firebaseHelper = new FirebaseHelper();
+        AppNotifications notifications = new AppNotifications(this);
+        notifications.createNotificationChannel();
 
         new Handler().postDelayed(new Runnable() {
             @Override
