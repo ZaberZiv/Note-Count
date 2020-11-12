@@ -188,6 +188,7 @@ public class FirebaseCallback {
                     GroupNote notes = new GroupNote();
                     notes.setId_note(snapshot.getKey());
                     notes.setUid(snapshot.getValue(GroupNote.class).getUid());
+                    notes.setGroup_id(snapshot.getValue(GroupNote.class).getGroup_id());
                     notes.setMessage(snapshot.getValue(GroupNote.class).getMessage());
                     notes.setSum(snapshot.getValue(GroupNote.class).getSum());
                     notes.setMember(snapshot.getValue(GroupNote.class).getMember());

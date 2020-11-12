@@ -19,16 +19,15 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/card_view_item"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_margin="4dp"
+            android:layout_marginTop="2dp"
             android:elevation="12dp"
-            app:cardBackgroundColor="@color/grey"
-            app:cardCornerRadius="16dp">
+            app:cardBackgroundColor="@color/grey">
 
             <RelativeLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
 
@@ -53,7 +52,7 @@
                     android:text="@{note.date}" />
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/user_name"
                     android:layout_margin="4dp"

@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,6 +28,7 @@ import com.zivapp.notes.databinding.ItemGroupNoteBinding;
 import com.zivapp.notes.model.FormatSum;
 import com.zivapp.notes.model.User;
 import com.zivapp.notes.util.UtilConverter;
+import com.zivapp.notes.util.UtilDate;
 import com.zivapp.notes.views.groupnotes.GroupContract;
 import com.zivapp.notes.views.groupnotes.GroupNoteActivity;
 
@@ -69,6 +71,32 @@ public class AdapterGroupItem extends RecyclerView.Adapter<RecyclerView.ViewHold
             // setting formated sum in XML (item_group_note)
             String formated_sum = UtilConverter.customStringFormat(note.getSum());
             binding.setFormat(new FormatSum(formated_sum));
+        }
+
+        private void editTextJob(GroupNote note) {
+            String message = binding.etNameOperation.getText().toString().trim();
+            String price = binding.etPriceOperation.getText().toString().trim();
+
+            GroupNote gNote = new GroupNote();
+            gNote.setMessage(message);
+            if (price.equals("")) {
+                gNote.setSum(0);
+            } else {
+                Log.v(TAG, "price before format: " + price);
+                String text = price.replace(" ", "");
+                Log.v(TAG, "price after format: " + text);
+
+                gNote.setSum(Integer.parseInt(text));
+            }
+
+            Log.v(TAG, "Uid: " + note.getUid());
+            Log.v(TAG, "id_note: " + note.getId_note());
+            Log.v(TAG, "getGroup_id: " + note.getGroup_id());
+
+            new FirebaseHelper()
+                    .getGroupNoteReference(note.getGroup_id())
+                    .child(note.getId_note())
+                    .setValue(gNote);
         }
 
         // Removing item data from recyclerView and firebase
@@ -143,6 +171,7 @@ public class AdapterGroupItem extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
 
         if (getItemViewType(position) == TYPE_USER) {
+//            ((ItemViewHolder) holder).editTextJob(list.get(position));
             ((ItemViewHolder) holder).setUserDetails(list.get(position));
             ((ItemViewHolder) holder).alert(list, position);
         } else {
@@ -152,6 +181,9 @@ public class AdapterGroupItem extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public int getItemViewType(int position) {
+        Log.v(TAG, "getUid(): " + list.get(position).getUid());
+        Log.v(TAG, "getFirebaseUser(): " + new FirebaseHelper().getFirebaseUser().getUid());
+
         if (list.get(position).getUid().equals(new FirebaseHelper().getFirebaseUser().getUid())) {
             return TYPE_USER;
         } else {

@@ -244,6 +244,7 @@ public class GroupPresenter implements GroupContract.Firebase, GroupContract.Ada
         gNote.setMember(mUser.getName());
         gNote.setDate(UtilDate.getGroupDate());
         gNote.setUid(mFirebaseHelper.getFirebaseUser().getUid());
+        gNote.setGroup_id(ID);
         mNotesReference.push().setValue(gNote);
     }
 
