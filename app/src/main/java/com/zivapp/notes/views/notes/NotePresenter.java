@@ -57,7 +57,6 @@ public class NotePresenter implements NoteContract.Firebase {
         this.activity = activity;
 
         mBinding = DataBindingUtil.setContentView(activity, R.layout.activity_note);
-        mDate = UtilDate.getCurrentDate();
 
         loadRecyclerView(mNoteList);
         firebaseReferences();
@@ -169,7 +168,8 @@ public class NotePresenter implements NoteContract.Firebase {
      */
     private void changeFocusIfTitleExist(MainMenuNote mainMenuNote) {
         if (mainMenuNote.getTitle() == null) return;
-        if (!mainMenuNote.getTitle().equals("")) mBinding.includeInterface.etNameOperation.requestFocus();
+        if (!mainMenuNote.getTitle().equals(""))
+            mBinding.includeInterface.etNameOperation.requestFocus();
     }
 
     /**
@@ -224,6 +224,10 @@ public class NotePresenter implements NoteContract.Firebase {
 
                 // saving message
                 saveNoteInFirebase(name, price, ID);
+                // saving total data
+                getCurrentDate();
+                String message = getMessage();
+                saveData(message);
 
                 editTextName.getText().clear();
                 editTextPrice.getText().clear();
@@ -264,6 +268,8 @@ public class NotePresenter implements NoteContract.Firebase {
         Log.v(TAG, "saveMainMenuNoteData()");
 
         getTitleName();
+        getCurrentDate();
+
         String message = getMessage();
         Log.v(TAG, "save message: " + message);
 
@@ -293,6 +299,8 @@ public class NotePresenter implements NoteContract.Firebase {
         Log.v(TAG, "updateMainMenuNoteData()");
 
         getTitleName();
+        getCurrentDate();
+
         String message = getMessage();
         Log.v(TAG, "update message: " + message);
 
@@ -328,5 +336,9 @@ public class NotePresenter implements NoteContract.Firebase {
 
     public void setFlag(boolean mFlag) {
         this.mFlag = mFlag;
+    }
+
+    public String getCurrentDate() {
+        return mDate = UtilDate.getCurrentDate();
     }
 }
