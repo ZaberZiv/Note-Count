@@ -68,68 +68,7 @@ public class GroupPresenter implements GroupContract.Firebase, GroupContract.Ada
         mUser = getUserFromFirebase(mUserReference);
         loadRecyclerView(mNoteList);
         ID = checkID();
-        getMessageNotifications(mNotesReference);
         addNewNoteItem();
-    }
-
-    public void getMessageNotifications(DatabaseReference reference) {
-        final AppNotifications notifications = new AppNotifications(activity);
-
-        ChildEventListener childEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-
-                    if (!dataSnapshot.getValue(GroupNote.class).getUid()
-                            .equals(new FirebaseHelper().getFirebaseUser().getUid())) {
-                        GroupNote notes = new GroupNote();
-                        notes.setId_note(dataSnapshot.getKey());
-                        notes.setUid(dataSnapshot.getValue(GroupNote.class).getUid());
-                        notes.setMessage(dataSnapshot.getValue(GroupNote.class).getMessage());
-                        notes.setSum(dataSnapshot.getValue(GroupNote.class).getSum());
-                        notes.setMember(dataSnapshot.getValue(GroupNote.class).getMember());
-                        notes.setDate(dataSnapshot.getValue(GroupNote.class).getDate());
-                        notifications.notifyNewMessages(notes);
-                    }
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
-                Log.d(TAG, "onChildChanged:" + dataSnapshot.getKey());
-                // A comment has changed, use the key to determine if we are displaying this
-                // comment and if so displayed the changed comment.
-//                Comment newComment = dataSnapshot.getValue(Comment.class);
-                String commentKey = dataSnapshot.getKey();
-
-                // ...
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                Log.d(TAG, "onChildRemoved:" + dataSnapshot.getKey());
-                // A comment has changed, use the key to determine if we are displaying this
-                // comment and if so remove it.
-                // ...
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
-                Log.d(TAG, "onChildMoved:" + dataSnapshot.getKey());
-
-                // A comment has changed position, use the key to determine if we are
-                // displaying this comment and if so move it.
-                String commentKey = dataSnapshot.getKey();
-
-                // ...
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "postComments:onCancelled", databaseError.toException());
-                Toast.makeText(activity, "Failed to load comments.",
-                        Toast.LENGTH_SHORT).show();
-            }
-        };
-        reference.addChildEventListener(childEventListener);
     }
 
     private void firebaseInstances() {

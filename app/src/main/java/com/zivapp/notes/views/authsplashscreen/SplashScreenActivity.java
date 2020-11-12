@@ -25,8 +25,8 @@ public class SplashScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash_screen);
 
         final FirebaseHelper firebaseHelper = new FirebaseHelper();
-        AppNotifications notifications = new AppNotifications(this);
-        notifications.createNotificationChannel();
+//        AppNotifications notifications = new AppNotifications(this);
+//        notifications.createNotificationChannel();
 
         new Handler().postDelayed(new Runnable() {
             @Override

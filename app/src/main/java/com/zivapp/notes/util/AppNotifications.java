@@ -16,8 +16,8 @@ import com.zivapp.notes.views.groupnotes.GroupNoteActivity;
 import com.zivapp.notes.views.mainmenu.MenuNotesActivity;
 
 public class AppNotifications {
-    //TODO: change the ID
     private static final String CHANNEL_ID = "101";
+    //TODO: change the ID
     private int notificationId = 202;
 
     private final Context context;
