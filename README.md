@@ -1,4 +1,3 @@
-"# Note-Count" 
 My third application
 
 App for notes and expense tracking.
