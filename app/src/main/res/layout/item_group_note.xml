@@ -55,10 +55,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/user_name"
-                    android:layout_margin="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="4dp"
                     android:orientation="horizontal">
 
-                    <EditText
+                    <TextView
                         android:id="@+id/et_name_operation"
                         style="@style/text_item_style"
                         android:layout_width="match_parent"
@@ -66,16 +68,17 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginEnd="4dp"
                         android:layout_weight="1"
-                        android:autofillHints="no"
-                        android:enabled="false"
-                        android:gravity="start"
-                        android:hint="@string/hint_message"
-                        android:inputType="text|textMultiLine|textCapSentences"
-                        android:maxLength="100"
-                        android:maxLines="5"
                         android:text="@{note.message}" />
 
-                    <EditText
+                    <!--                    android:autofillHints="no"-->
+                    <!--                    android:enabled="false"-->
+                    <!--                    android:gravity="start"-->
+                    <!--                    android:hint="@string/hint_message"-->
+                    <!--                    android:inputType="text|textMultiLine|textCapSentences"-->
+                    <!--                    android:maxLength="100"-->
+                    <!--                    android:maxLines="5"-->
+
+                    <TextView
                         android:id="@+id/et_price_operation"
                         style="@style/text_item_style"
                         android:layout_width="match_parent"
@@ -83,13 +86,14 @@
                         android:layout_marginStart="4dp"
                         android:layout_marginEnd="8dp"
                         android:layout_weight="2"
-                        android:autofillHints="no"
-                        android:enabled="false"
-                        android:gravity="start"
-                        android:hint="@string/hint_message"
-                        android:inputType="number"
-                        android:maxLength="9"
                         android:text="@{format.converted_sum}" />
+
+                    <!--                    android:autofillHints="no"-->
+                    <!--                    android:enabled="false"-->
+                    <!--                    android:gravity="start"-->
+                    <!--                    android:hint="@string/hint_message"-->
+                    <!--                    android:inputType="number"-->
+                    <!--                    android:maxLength="9"-->
 
                 </LinearLayout>
             </RelativeLayout>
