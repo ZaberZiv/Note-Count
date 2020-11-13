@@ -7,11 +7,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.zivapp.notes.R;
 import com.zivapp.notes.firebase.FirebaseHelper;
-import com.zivapp.notes.util.AppNotifications;
 import com.zivapp.notes.views.login.LoginActivity;
 import com.zivapp.notes.views.mainmenu.MenuNotesActivity;
 

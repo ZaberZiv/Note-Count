@@ -1,4 +1,4 @@
-package com.zivapp.notes.util;
+package com.zivapp.notes.notifications;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
