@@ -73,31 +73,31 @@ public class AdapterGroupItem extends RecyclerView.Adapter<RecyclerView.ViewHold
             binding.setFormat(new FormatSum(formated_sum));
         }
 
-        private void editTextJob(GroupNote note) {
-            String message = binding.etNameOperation.getText().toString().trim();
-            String price = binding.etPriceOperation.getText().toString().trim();
-
-            GroupNote gNote = new GroupNote();
-            gNote.setMessage(message);
-            if (price.equals("")) {
-                gNote.setSum(0);
-            } else {
-                Log.v(TAG, "price before format: " + price);
-                String text = price.replace(" ", "");
-                Log.v(TAG, "price after format: " + text);
-
-                gNote.setSum(Integer.parseInt(text));
-            }
-
-            Log.v(TAG, "Uid: " + note.getUid());
-            Log.v(TAG, "id_note: " + note.getId_note());
-            Log.v(TAG, "getGroup_id: " + note.getGroup_id());
-
-            new FirebaseHelper()
-                    .getGroupNoteReference(note.getGroup_id())
-                    .child(note.getId_note())
-                    .setValue(gNote);
-        }
+//        private void editTextJob(GroupNote note) {
+//            String message = binding.includeGroupChatItem.etNameOperation.getText().toString().trim();
+//            String price = binding.etPriceOperation.getText().toString().trim();
+//
+//            GroupNote gNote = new GroupNote();
+//            gNote.setMessage(message);
+//            if (price.equals("")) {
+//                gNote.setSum(0);
+//            } else {
+//                Log.v(TAG, "price before format: " + price);
+//                String text = price.replace(" ", "");
+//                Log.v(TAG, "price after format: " + text);
+//
+//                gNote.setSum(Integer.parseInt(text));
+//            }
+//
+//            Log.v(TAG, "Uid: " + note.getUid());
+//            Log.v(TAG, "id_note: " + note.getId_note());
+//            Log.v(TAG, "getGroup_id: " + note.getGroup_id());
+//
+//            new FirebaseHelper()
+//                    .getGroupNoteReference(note.getGroup_id())
+//                    .child(note.getId_note())
+//                    .setValue(gNote);
+//        }
 
         // Removing item data from recyclerView and firebase
         public void alert(final ArrayList<GroupNote> list, final int position) {
