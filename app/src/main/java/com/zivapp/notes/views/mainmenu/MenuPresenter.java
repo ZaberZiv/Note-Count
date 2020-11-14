@@ -85,9 +85,6 @@ public class MenuPresenter implements MenuContract.Firebase, MenuContract.Presen
         }
     }
 
-    /**
-     * Floating Action Button. Redirect to NoteActivity.
-     */
     private void noteButton() {
         mBinding.noteButton.setOnClickListener(new View.OnClickListener() {
             @Override

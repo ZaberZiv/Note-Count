@@ -181,9 +181,6 @@ public class AdapterGroupItem extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public int getItemViewType(int position) {
-        Log.v(TAG, "getUid(): " + list.get(position).getUid());
-        Log.v(TAG, "getFirebaseUser(): " + new FirebaseHelper().getFirebaseUser().getUid());
-
         if (list.get(position).getUid().equals(new FirebaseHelper().getFirebaseUser().getUid())) {
             return TYPE_USER;
         } else {

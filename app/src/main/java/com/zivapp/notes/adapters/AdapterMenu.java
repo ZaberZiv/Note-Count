@@ -15,9 +15,13 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.zivapp.notes.R;
+import com.zivapp.notes.databinding.ItemGroupMembersBinding;
+import com.zivapp.notes.databinding.ItemGroupMenuBinding;
+import com.zivapp.notes.databinding.ItemGroupNoteBinding;
 import com.zivapp.notes.databinding.ItemMainMenuBinding;
 import com.zivapp.notes.firebase.FirebaseHelper;
 import com.zivapp.notes.model.FormatSum;
+import com.zivapp.notes.model.GroupNote;
 import com.zivapp.notes.model.MainMenuNote;
 import com.zivapp.notes.model.Note;
 import com.zivapp.notes.util.UtilConverter;
@@ -30,9 +34,11 @@ import java.util.ArrayList;
 /**
  * A ViewModel used for the {@link MenuNotesActivity}.
  */
-public class AdapterMenu extends RecyclerView.Adapter<AdapterMenu.NoteViewHolder> {
+public class AdapterMenu extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final String TAG = "AdapterMenu";
+    private static final int TYPE_NOTE = 1;
+    private static final int TYPE_GROUP = 2;
 
     private ArrayList<MainMenuNote> list;
     private Context context;
@@ -46,100 +52,110 @@ public class AdapterMenu extends RecyclerView.Adapter<AdapterMenu.NoteViewHolder
         this.list = list;
     }
 
-    public static class NoteViewHolder extends RecyclerView.ViewHolder {
+    public class NoteViewHolder extends RecyclerView.ViewHolder {
 
         private ItemMainMenuBinding binding;
+        private MenuItemsBinding menuItemsBinding;
 
         public NoteViewHolder(@NonNull ItemMainMenuBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
+            menuItemsBinding = new MenuItemsBinding();
+        }
+
+        public void setNoteDetails(ArrayList<MainMenuNote> list, int position) {
+            // Binding data to XML file: item_main_menu.xml
+            binding.setNote(list.get(position));
+
+            // If User didn't set title name the "New note" will be added by default
+            String defaultName = menuItemsBinding.getDefaultName(position);
+            binding.setItem(new Note(defaultName));
+
+            // Binding formated total sum to XML file: item_main_menu.xml
+            String formated_total_sum = menuItemsBinding.getFormatTotalSum(list, position);
+            binding.setFormat(new FormatSum(formated_total_sum));
+        }
+
+        public void cardClickListener(ArrayList<MainMenuNote> list, int position) {
+            menuItemsBinding.cardClickListener(binding.cardViewNote, context, list, position);
+        }
+
+        public void cardLongClickListener(ArrayList<MainMenuNote> list, int position) {
+            menuItemsBinding.cardLongClickListener(binding.cardViewNote, context, new AdapterMenu(list, context), list, position);
+        }
+    }
+
+    public class GroupViewHolder extends RecyclerView.ViewHolder {
+
+        private final ItemGroupMenuBinding binding;
+        private MenuItemsBinding menuItemsBinding;
+
+        public GroupViewHolder(@NonNull ItemGroupMenuBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+            menuItemsBinding = new MenuItemsBinding();
+        }
+
+        public void setNoteDetails(ArrayList<MainMenuNote> list, int position) {
+            // Binding data to XML file: item_main_menu.xml
+            binding.setNote(list.get(position));
+
+            // If User didn't set title name the "New note" will be added by default
+            String defaultName = menuItemsBinding.getDefaultName(position);
+            binding.setItem(new Note(defaultName));
+
+            // Binding formated total sum to XML file: item_main_menu.xml
+            String formated_total_sum = menuItemsBinding.getFormatTotalSum(list, position);
+            binding.setFormat(new FormatSum(formated_total_sum));
+        }
+
+        public void cardClickListener(ArrayList<MainMenuNote> list, int position) {
+            menuItemsBinding.cardClickListener(binding.cardViewNote, context, list, position);
+        }
+
+        public void cardLongClickListener(ArrayList<MainMenuNote> list, int position) {
+            menuItemsBinding.cardLongClickListener(binding.cardViewNote, context, new AdapterMenu(list, context), list, position);
         }
     }
 
     @NonNull
     @Override
-    public NoteViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        ItemMainMenuBinding binding = DataBindingUtil.inflate(inflater,
-                R.layout.item_main_menu, parent, false);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        return new NoteViewHolder(binding);
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        if (viewType == TYPE_NOTE) { // notes layout
+            ItemMainMenuBinding binding = DataBindingUtil.inflate(inflater,
+                    R.layout.item_main_menu, parent, false);
+            return new NoteViewHolder(binding);
+
+        } else { // group notes layout
+            ItemGroupMenuBinding binding = DataBindingUtil.inflate(inflater,
+                    R.layout.item_group_menu, parent, false);
+            return new GroupViewHolder(binding);
+        }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final NoteViewHolder holder, final int position) {
-        // Binding data to XML file: item_main_menu.xml
-        MainMenuNote note = list.get(position);
-        holder.binding.setNote(note);
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
 
-        // If User didn't set title name the "New note" will be added by default
-        String defaultName = "New Note " + (position + 1);
-        holder.binding.setItem(new Note(defaultName));
-
-        // Binding formated total sum to XML file: item_main_menu.xml
-        String formated_total_sum = UtilConverter.customStringFormat(list.get(position).getTotal_sum());
-        holder.binding.setFormat(new FormatSum(formated_total_sum));
-
-        // Opening new Activity (group note or single note) and send ID
-        holder.binding.cardViewNote.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (list.get(position).isGroup()) {
-                    Log.v(TAG, "Opening GroupNoteActivity and send ID: "
-                            + list.get(position).getId());
-
-                    openNewActivity(GroupNoteActivity.class, list, position);
-                } else {
-                    Log.v(TAG, "Opening NoteActivity and send ID: "
-                            + list.get(position).getId());
-
-                    openNewActivity(NoteActivity.class, list, position);
-                }
-            }
-        });
-
-        // Removing item data from RecyclerView and Firebase;
-        holder.binding.cardViewNote.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-
-                new AlertDialog.Builder(context)
-                        .setIcon(android.R.drawable.ic_notification_clear_all)
-                        .setTitle(R.string.note_title)
-                        .setMessage(R.string.note_message)
-                        .setPositiveButton(R.string.note_positive_btn, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Log.v(TAG, "REMOVING NOTE: "
-                                        + list.get(position).getTitle()
-                                        + " ID_note: " + list.get(position).getId());
-
-                                FirebaseHelper firebaseHelper = new FirebaseHelper();
-                                firebaseHelper.deleteMenuNoteFromFirebase(list, position);
-                                firebaseHelper.deleteGroupNoteFromFirebase(list, position);
-
-                                list.remove(position);
-                                notifyItemRemoved(position);
-                                showToast();
-                            }
-                        })
-                        .setNegativeButton(R.string.note_negative_btn, null)
-                        .show();
-
-                return false;
-            }
-        });
+        if (getItemViewType(position) == TYPE_NOTE) {
+            ((NoteViewHolder) holder).setNoteDetails(list, position);
+            ((NoteViewHolder) holder).cardClickListener(list, position);
+            ((NoteViewHolder) holder).cardLongClickListener(list, position);
+        } else {
+            ((GroupViewHolder) holder).setNoteDetails(list, position);
+            ((GroupViewHolder) holder).cardClickListener(list, position);
+            ((GroupViewHolder) holder).cardLongClickListener(list, position);
+        }
     }
 
-    private void showToast() {
-        Toast.makeText(context, R.string.note_toast, Toast.LENGTH_SHORT).show();
-    }
-
-    private void openNewActivity(Class clazz, ArrayList<MainMenuNote> list, int position) {
-        Intent intent = new Intent(context, clazz);
-        intent.putExtra("id_note", list.get(position).getId());
-        context.startActivity(intent);
+    @Override
+    public int getItemViewType(int position) {
+        if (list.get(position).isGroup()) {
+            return TYPE_GROUP;
+        } else {
+            return TYPE_NOTE;
+        }
     }
 
     @Override
