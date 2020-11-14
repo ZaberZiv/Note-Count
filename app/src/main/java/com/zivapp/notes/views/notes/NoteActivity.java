@@ -3,7 +3,6 @@ package com.zivapp.notes.views.notes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -11,9 +10,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.zivapp.notes.R;
-import com.zivapp.notes.model.FormatSum;
-import com.zivapp.notes.util.UtilConverter;
-import com.zivapp.notes.util.UtilIntent;
 
 public class NoteActivity extends AppCompatActivity {
 
@@ -41,6 +37,9 @@ public class NoteActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * onClick method in toolbar menu
+     */
     public void shareDataButton(MenuItem item) {
         mNotePresenter.shareData();
     }

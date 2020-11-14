@@ -36,16 +36,16 @@ import java.util.UUID;
 public class NotePresenter implements NoteContract.Firebase {
     private static final String TAG = "NotePresenter";
 
-    private Context context;
-    private Activity activity;
+    private final Context context;
+    private final Activity activity;
+    private final ActivityNoteBinding mBinding;
 
-    private String ID, mTitleName, mDate;
+    private final String ID;
     private int mTotalSum;
     private boolean mFlag;
     private MainMenuNote mMainMenuNote;
     private ArrayList<Note> mNoteList = new ArrayList<>();
 
-    private ActivityNoteBinding mBinding;
     private RecyclerView mRecyclerView;
     private AdapterNote mAdapter;
 
@@ -59,12 +59,12 @@ public class NotePresenter implements NoteContract.Firebase {
         mBinding = DataBindingUtil.setContentView(activity, R.layout.activity_note);
 
         loadRecyclerView(mNoteList);
-        firebaseReferences();
+        firebase();
         ID = checkID();
-        addNewNoteItem();
+        addNewNoteItemButton();
     }
 
-    private void firebaseReferences() {
+    private void firebase() {
         mFirebaseHelper = new FirebaseHelper();
         mFirebaseCallback = new FirebaseCallback(this);
     }
@@ -79,15 +79,6 @@ public class NotePresenter implements NoteContract.Firebase {
         DatabaseReference reference = mFirebaseHelper.getTotalDataRefCurrentNote(id);
         reference.keepSynced(true);
         return reference;
-    }
-
-    private void saveTotalData(String id, MainMenuNote mainMenuNote) {
-        getTotalDataRef(id).setValue(mainMenuNote);
-    }
-
-    public void shareData() {
-        UtilIntent.shareDataByIntent(context,
-                ShareData.formatStringData(mNoteList, mMainMenuNote));
     }
 
     /**
@@ -107,7 +98,6 @@ public class NotePresenter implements NoteContract.Firebase {
 
             mNoteList = getDataFromFirebase(getNoteRef(uID));
             mMainMenuNote = getTotalDataFromFirebase(getTotalDataRef(uID));
-
             mFlag = false;
         } else { // if not exist in database
             Log.v(TAG, "New Note!");
@@ -115,7 +105,6 @@ public class NotePresenter implements NoteContract.Firebase {
             // generate new ID
             uID = UUID.randomUUID().toString();
             mNoteList = getDataFromFirebase(getNoteRef(uID));
-
             mFlag = true;
         }
         return uID;
@@ -134,7 +123,7 @@ public class NotePresenter implements NoteContract.Firebase {
      */
     @Override
     public void updateNoteUI(ArrayList<Note> noteList) {
-        mTotalSum = getTotalSum(noteList, 0);
+        setTotalSum(noteList, 0);
         updateUI(noteList);
     }
 
@@ -176,13 +165,13 @@ public class NotePresenter implements NoteContract.Firebase {
      * Count getSum() from every Note.class object
      * and bind total sum to XML
      */
-    private int getTotalSum(List<Note> list, int price) {
+    private void setTotalSum(List<Note> list, int price) {
         int totalSum = price;
         for (Note note : list) {
             totalSum += note.getSum();
         }
+        mTotalSum = totalSum;
         setFormatTotalSum(totalSum);
-        return totalSum;
     }
 
     /**
@@ -198,7 +187,7 @@ public class NotePresenter implements NoteContract.Firebase {
      * notify adapter that data has changed.
      * EditText initialized here and made some work with it.
      */
-    private void addNewNoteItem() {
+    private void addNewNoteItemButton() {
         final EditText editTextTitleName = mBinding.toolbar.etNoteTitleName;
         final EditText editTextName = mBinding.includeInterface.etNameOperation;
         final EditText editTextPrice = mBinding.includeInterface.etPriceOperation;
@@ -218,27 +207,20 @@ public class NotePresenter implements NoteContract.Firebase {
                     return;
                 }
 
-                String name = editTextName.getText().toString().trim();
-                int price = Integer.parseInt(editTextPrice.getText().toString().trim());
-                mTotalSum = getTotalSum(mNoteList, price);
+                String message = editTextName.getText().toString().trim();
+                int sum = Integer.parseInt(editTextPrice.getText().toString().trim());
+                setTotalSum(mNoteList, sum);
 
                 // saving message
-                saveNoteInFirebase(name, price, ID);
+                saveNote(message, sum, ID);
                 // saving total data
-                getCurrentDate();
-                String message = getMessage();
-                saveData(message);
+                saveTotalData();
 
                 editTextName.getText().clear();
                 editTextPrice.getText().clear();
                 editTextName.requestFocus();
             }
         });
-    }
-
-    private void saveNoteInFirebase(String name, int price, String id) {
-        Note note = new Note(name, price, id);
-        getNoteRef(id).push().setValue(note);
     }
 
     private void loadRecyclerView(ArrayList<Note> list) {
@@ -267,29 +249,12 @@ public class NotePresenter implements NoteContract.Firebase {
     void saveMainMenuNoteData() {
         Log.v(TAG, "saveMainMenuNoteData()");
 
-        getTitleName();
-        getCurrentDate();
-
-        String message = getMessage();
-        Log.v(TAG, "save message: " + message);
-
         if (mTotalSum != 0) {
             Log.v(TAG, "DATA SAVED for the first time!");
-            saveData(message);
+            saveTotalData();
         } else {
             Log.v(TAG, "Empty note haven't saved!");
         }
-    }
-
-    private void saveData(String message) {
-        MainMenuNote mainMenuNote = new MainMenuNote();
-        mainMenuNote.setDate(mDate);
-        mainMenuNote.setTitle(mTitleName);
-        mainMenuNote.setTotal_sum(mTotalSum);
-        mainMenuNote.setId(ID);
-        mainMenuNote.setGroup(false);
-        mainMenuNote.setMessage(message);
-        saveTotalData(ID, mainMenuNote);
     }
 
     /**
@@ -298,36 +263,53 @@ public class NotePresenter implements NoteContract.Firebase {
     void updateMainMenuNoteData() {
         Log.v(TAG, "updateMainMenuNoteData()");
 
-        getTitleName();
-        getCurrentDate();
-
-        String message = getMessage();
-        Log.v(TAG, "update message: " + message);
-
         // If title or total sum has changed than update data
-        if (mMainMenuNote.getTitle() == null || !message.equals(mMainMenuNote.getMessage())) {
+        if (mMainMenuNote.getTitle() == null || !getMessage().equals(mMainMenuNote.getMessage())) {
             Log.v(TAG, "mainMenuNote is NULL");
-            saveData(message);
+            saveTotalData();
 
-        } else if (!mMainMenuNote.getTitle().equals(mTitleName) || mMainMenuNote.getTotal_sum() != mTotalSum) {
+        } else if (!mMainMenuNote.getTitle().equals(getTitleName()) || mMainMenuNote.getTotal_sum() != mTotalSum) {
             Log.v(TAG, "DATA UPDATED");
-            saveData(message);
+            saveTotalData();
 
         } else {
             Log.v(TAG, "Note haven't changed!");
         }
     }
 
+    private void saveNote(String message, int sum, String id_note) {
+        Note note = new Note();
+        note.setMessage(message);
+        note.setSum(sum);
+        note.setId_note(id_note);
+        saveNoteInFirebase(id_note, note);
+    }
+
+    private void saveNoteInFirebase(String id_note, Note note) {
+        getNoteRef(id_note).push().setValue(note);
+    }
+
+    private void saveTotalData() {
+        MainMenuNote mainMenuNote = new MainMenuNote();
+        mainMenuNote.setDate(getCurrentDate());
+        mainMenuNote.setTitle(getTitleName());
+        mainMenuNote.setTotal_sum(mTotalSum);
+        mainMenuNote.setId(ID);
+        mainMenuNote.setGroup(false);
+        mainMenuNote.setMessage(getMessage());
+        saveTotalDataInFirebase(ID, mainMenuNote);
+    }
+
+    private void saveTotalDataInFirebase(String id, MainMenuNote mainMenuNote) {
+        getTotalDataRef(id).setValue(mainMenuNote);
+    }
+
     public String getTitleName() {
-        return mTitleName = mBinding.toolbar.etNoteTitleName.getText().toString().trim();
+        return mBinding.toolbar.etNoteTitleName.getText().toString().trim();
     }
 
     public String getMessage() {
         return mBinding.includeHintMessage.editTextMessage.getText().toString().trim();
-    }
-
-    public void setTitleName(String mTitleName) {
-        this.mTitleName = mTitleName;
     }
 
     public boolean ismFlag() {
@@ -339,6 +321,14 @@ public class NotePresenter implements NoteContract.Firebase {
     }
 
     public String getCurrentDate() {
-        return mDate = UtilDate.getCurrentDate();
+        return UtilDate.getCurrentDate();
+    }
+
+    /**
+     * method for share button in NoteActivity
+     */
+    public void shareData() {
+        UtilIntent.shareDataByIntent(context,
+                ShareData.formatStringData(mNoteList, mMainMenuNote));
     }
 }
