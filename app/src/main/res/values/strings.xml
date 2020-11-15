@@ -10,6 +10,9 @@
     <string name="image_descr_no_contacts">No contacts</string>
     <string name="no_friends">Looks like your friends do not use our app yet…</string>
 
+    <string name="open_nav_view">Open</string>
+    <string name="close_nav_view">Close</string>
+
     <string name="hint_name">Note name</string>
     <string name="hint_text">Add text</string>
     <string name="hint_price">Add price</string>
