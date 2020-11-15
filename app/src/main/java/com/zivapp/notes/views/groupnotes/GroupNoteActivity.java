@@ -2,40 +2,13 @@ package com.zivapp.notes.views.groupnotes;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.databinding.DataBindingUtil;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.Toast;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 import com.zivapp.notes.R;
-import com.zivapp.notes.adapters.AdapterGroupItem;
-import com.zivapp.notes.firebase.FirebaseHelper;
-import com.zivapp.notes.model.GroupNote;
-import com.zivapp.notes.model.MainMenuNote;
-import com.zivapp.notes.model.Note;
-import com.zivapp.notes.databinding.ActivityGroupNoteBinding;
-import com.zivapp.notes.model.FormatSum;
-import com.zivapp.notes.model.User;
-import com.zivapp.notes.util.ShareData;
-import com.zivapp.notes.util.UtilConverter;
-import com.zivapp.notes.util.UtilDate;
-import com.zivapp.notes.util.UtilIntent;
-
-import java.security.acl.Group;
-import java.util.ArrayList;
-import java.util.List;
 
 public class GroupNoteActivity extends AppCompatActivity {
 

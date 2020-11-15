@@ -20,6 +20,7 @@ import com.zivapp.notes.firebase.FirebaseHelper;
 import com.zivapp.notes.model.FormatSum;
 import com.zivapp.notes.model.GroupNote;
 import com.zivapp.notes.model.MainMenuNote;
+import com.zivapp.notes.model.Note;
 import com.zivapp.notes.model.User;
 import com.zivapp.notes.util.ShareData;
 import com.zivapp.notes.util.UtilConverter;
@@ -32,13 +33,16 @@ import java.util.List;
 public class GroupPresenter implements GroupContract.Firebase, GroupContract.Adapter {
 
     private static final String TAG = "GroupPresenter";
+
     private ArrayList<GroupNote> mNoteList = new ArrayList<>();
     private ArrayList<User> mMembersList = new ArrayList<>();
 
     private MainMenuNote mMainMenuNote;
-    private User mUser;
+    private final User mUser;
 
-    private ActivityGroupNoteBinding mBinding;
+    private final ActivityGroupNoteBinding mBinding;
+    private final Activity activity;
+
     private RecyclerView mRecyclerView;
     private AdapterGroupItem mAdapter;
 
@@ -49,23 +53,22 @@ public class GroupPresenter implements GroupContract.Firebase, GroupContract.Ada
     private DatabaseReference mUserReference;
     private DatabaseReference mMembersReference;
 
-    private String ID, mTitleName, mDate;
+    private final String ID;
     private int mTotalSum;
     private boolean mFlag;
-    private Activity activity;
 
     public GroupPresenter(Activity activity) {
         this.activity = activity;
         mBinding = DataBindingUtil.setContentView(activity, R.layout.activity_group_note);
 
-        firebaseInstances();
+        firebase();
         mUser = getUserFromFirebase(mUserReference);
         loadRecyclerView(mNoteList);
         ID = checkID();
         addNewNoteItem();
     }
 
-    private void firebaseInstances() {
+    private void firebase() {
         mFirebaseCallback = new FirebaseCallback(this);
         mFirebaseHelper = new FirebaseHelper();
 
@@ -74,7 +77,7 @@ public class GroupPresenter implements GroupContract.Firebase, GroupContract.Ada
         mUserReference.keepSynced(true);
     }
 
-    private void references(String id) {
+    private void setReferences(String id) {
         mNotesReference = mFirebaseHelper.getGroupNoteReference(id);
         mTotalDataReference = mFirebaseHelper.getGroupTotalDataReference(id);
         mMembersReference = mFirebaseHelper.getGroupMembersDataReference(id);
@@ -92,23 +95,23 @@ public class GroupPresenter implements GroupContract.Firebase, GroupContract.Ada
      */
     private String checkID() {
         Bundle arguments = activity.getIntent().getExtras();
-        String uID = arguments.getString("id_note");
+        String uID;
 
-        // if already exist in database
-        if (uID != null) {
+        if (arguments != null) {// if exist in database
+            uID = arguments.getString("id_note");
             Log.v(TAG, "This note is already exist! ID: " + uID);
 
-            references(uID);
+            setReferences(uID);
             mNoteList = getDataFromFirebase(mNotesReference);
             mMainMenuNote = getTotalDataFromFirebase(mTotalDataReference);
             mMembersList = getMembersFromFirebase(mMembersReference);
             mFlag = false;
 
-        } else { // if not exist in database
+        } else { // if created in contacts
             Log.v(TAG, "New Note!");
 
             uID = getExtraData();
-            references(uID);
+            setReferences(uID);
             mNoteList = getDataFromFirebase(mNotesReference);
             mMembersList = getMembersFromFirebase(mMembersReference);
             mFlag = true;
@@ -125,7 +128,9 @@ public class GroupPresenter implements GroupContract.Firebase, GroupContract.Ada
         return key;
     }
 
-    // User data
+    /**
+     * Get User data from firebase
+     */
     private User getUserFromFirebase(DatabaseReference reference) {
         return mFirebaseCallback.getUserFromFirebase(reference);
     }
@@ -155,21 +160,20 @@ public class GroupPresenter implements GroupContract.Firebase, GroupContract.Ada
      * Count getSum() from every Note.class object
      * and bind total sum to XML
      */
-    private int getTotalSum(List<GroupNote> list, int price) {
+    private void setTotalSum(List<GroupNote> list, int price) {
         int totalSum = price;
-        for (int i = 0; i < list.size(); i++) {
-            totalSum += list.get(i).getSum();
+        for (Note note : list) {
+            totalSum += note.getSum();
         }
-        setFormatSumDataInLayout(totalSum);
-
-        return totalSum;
+        mTotalSum = totalSum;
+        setFormatTotalSum(totalSum);
     }
 
-    private void setFormatSumDataInLayout(int totalSum) {
+    private void setFormatTotalSum(int totalSum) {
         mBinding.toolbar.setFormat(new FormatSum(UtilConverter.customStringFormat(totalSum)));
     }
 
-    void loadRecyclerView(ArrayList<GroupNote> list) {
+    private void loadRecyclerView(ArrayList<GroupNote> list) {
         mRecyclerView = mBinding.recyclerGroups;
         mRecyclerView.setLayoutManager(
                 new StaggeredGridLayoutManager(
@@ -181,7 +185,7 @@ public class GroupPresenter implements GroupContract.Firebase, GroupContract.Ada
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    void updateUI(ArrayList<GroupNote> list) {
+    private void updateUI(ArrayList<GroupNote> list) {
         if (mAdapter == null) {
             mAdapter = new AdapterGroupItem(list, activity, this);
             mRecyclerView.setAdapter(mAdapter);
@@ -218,11 +222,13 @@ public class GroupPresenter implements GroupContract.Firebase, GroupContract.Ada
                 }
 
                 String message = editTextName.getText().toString().trim();
-                int price = Integer.parseInt(editTextPrice.getText().toString().trim());
-                mTotalSum = getTotalSum(mNoteList, price);
+                int sum = Integer.parseInt(editTextPrice.getText().toString().trim());
+                setTotalSum(mNoteList, sum);
 
                 // Saving message
-                saveGroupNoteInFirebase(message, price);
+                saveGroupNote(message, sum);
+                //Saving total sum
+                saveTotalData();
 
                 editTextName.getText().clear();
                 editTextPrice.getText().clear();
@@ -231,32 +237,16 @@ public class GroupPresenter implements GroupContract.Firebase, GroupContract.Ada
         });
     }
 
-    private void saveGroupNoteInFirebase(String message, int price) {
-        GroupNote gNote = new GroupNote();
-        gNote.setMessage(message);
-        gNote.setSum(price);
-        gNote.setMember(mUser.getName());
-        gNote.setDate(UtilDate.getGroupDate());
-        gNote.setUid(mFirebaseHelper.getFirebaseUser().getUid());
-        gNote.setGroup_id(ID);
-        mNotesReference.push().setValue(gNote);
-    }
-
     /**
-     * Saving data, MainMenuNote.class;
+     * Saving data, in GroupNoteActivity;
      */
     void saveMainMenuNoteData() {
         Log.v(TAG, "saveMainMenuNoteData()");
 
-        getCurrentData();
-        String message = getMessage();
-
         if (mTotalSum != 0) {
             Log.v(TAG, "DATA SAVED for the first time!");
-            Log.v(TAG, "saveMainMenuNoteData() *** DATE: " + mDate + "; Title: "
-                    + mTitleName + "; TotalSUm: " + mTotalSum + "; ID: " + ID);
 
-            saveTotalData(message);
+            saveTotalData();
 
         } else {
             Log.v(TAG, "Empty note haven't saved!");
@@ -264,41 +254,56 @@ public class GroupPresenter implements GroupContract.Firebase, GroupContract.Ada
     }
 
     /**
-     * Updating data, MainMenuNote.class
+     * Updating data, in GroupNoteActivity;
      */
     void updateMainMenuNoteData() {
         Log.v(TAG, "updateMainMenuNoteData()");
 
-        getCurrentData();
-        String message = getMessage();
         // If title or total sum has changed than update data
-        if (mMainMenuNote.getTitle() == null || !message.equals(mMainMenuNote.getMessage())) {
+        if (mMainMenuNote.getTitle() == null || !getMessage().equals(mMainMenuNote.getMessage())) {
             Log.v(TAG, "mMainMenuNote is NULL");
 
-            saveTotalData(message);
+            saveTotalData();
 
-        } else if (!mMainMenuNote.getTitle().equals(mTitleName)
+        } else if (!mMainMenuNote.getTitle().equals(getTitleName())
                 || mMainMenuNote.getTotal_sum() != mTotalSum) {
             Log.v(TAG, "DATA UPDATED");
-            Log.v(TAG, "updateMainMenuNoteData() *** DATE: " + mDate + "; Title: "
-                    + mTitleName + "; TotalSUm: " + mTotalSum + "; ID: " + ID);
 
-            saveTotalData(message);
+            saveTotalData();
 
         } else {
             Log.v(TAG, "Note haven't changed!");
         }
     }
 
-    void saveTotalData(String message) {
+    private void saveGroupNote(String message, int price) {
+        GroupNote gNote = new GroupNote();
+        gNote.setMessage(message);
+        gNote.setSum(price);
+        gNote.setMember(mUser.getName());
+        gNote.setDate(UtilDate.getGroupDate());
+        gNote.setUid(mFirebaseHelper.getFirebaseUser().getUid());
+        gNote.setGroup_id(ID);
+        saveGroupNoteInFirebase(gNote);
+    }
+
+    private void saveGroupNoteInFirebase(GroupNote gNote) {
+        mNotesReference.push().setValue(gNote);
+    }
+
+    private void saveTotalData() {
         MainMenuNote mainMenuNote = new MainMenuNote();
-        mainMenuNote.setDate(mDate);
-        mainMenuNote.setTitle(mTitleName);
+        mainMenuNote.setDate(getCurrentDate());
+        mainMenuNote.setTitle(getTitleName());
         mainMenuNote.setTotal_sum(mTotalSum);
         mainMenuNote.setId(ID);
         mainMenuNote.setGroup(true);
-        mainMenuNote.setMessage(message);
+        mainMenuNote.setMessage(getMessage());
 
+        saveTotalDataInFirebase(mainMenuNote);
+    }
+
+    private void saveTotalDataInFirebase(MainMenuNote mainMenuNote) {
         // Saving data of members to the branch "Total Data" -> member id -> note id -> data
         for (User user : mMembersList) {
             mFirebaseHelper.saveTotalDataMembers(user.getId(), ID, mainMenuNote);
@@ -311,14 +316,12 @@ public class GroupPresenter implements GroupContract.Firebase, GroupContract.Ada
         mTotalDataReference.setValue(mainMenuNote);
     }
 
-    void shareData() {
-        UtilIntent.shareDataByIntent(activity,
-                ShareData.formatStringDataGroup(mNoteList, mMainMenuNote));
+    String getCurrentDate() {
+        return UtilDate.getCurrentDate();
     }
 
-    void getCurrentData() {
-        mTitleName = mBinding.toolbar.etNoteTitleName.getText().toString().trim();
-        mDate = UtilDate.getCurrentDate();
+    public String getTitleName() {
+        return mBinding.toolbar.etNoteTitleName.getText().toString().trim();
     }
 
     public boolean isFlag() {
@@ -329,9 +332,13 @@ public class GroupPresenter implements GroupContract.Firebase, GroupContract.Ada
         this.mFlag = mFlag;
     }
 
+    public String getMessage() {
+        return mBinding.includeHintMessage.editTextMessage.getText().toString().trim();
+    }
+
     @Override
     public void updateGroupNoteUI(ArrayList<GroupNote> noteList) {
-        mTotalSum = getTotalSum(noteList, 0);
+        setTotalSum(noteList, 0);
         updateUI(noteList);
     }
 
@@ -341,6 +348,9 @@ public class GroupPresenter implements GroupContract.Firebase, GroupContract.Ada
         changeFocusIfTitleExist(mainMenuNote);
     }
 
+    /**
+     * set data in xml file
+     */
     private void setMainMenuNoteDataInLayout(MainMenuNote mainMenuNote) {
         mBinding.toolbar.setMainNote(mainMenuNote);
         mBinding.includeHintMessage.setMainNote(mainMenuNote);
@@ -360,7 +370,11 @@ public class GroupPresenter implements GroupContract.Firebase, GroupContract.Ada
         return ID;
     }
 
-    public String getMessage() {
-        return mBinding.includeHintMessage.editTextMessage.getText().toString().trim();
+    /**
+     * share icon in GroupNoteActivity
+     */
+    void shareData() {
+        UtilIntent.shareDataByIntent(activity,
+                ShareData.formatStringDataGroup(mNoteList, mMainMenuNote));
     }
 }
