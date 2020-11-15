@@ -178,7 +178,8 @@ public class ContactsPresenter implements SelectedUsersListener {
             @Override
             public void onRefresh() {
 
-                getDataFromFirebase(mAllUsersReference);
+                mFirebaseUsersList = getDataFromFirebase(mAllUsersReference);
+                updateUI(findMatchedUsers(mContactsList, mFirebaseUsersList));
 
                 mBinding.refreshLayout.setRefreshing(false);
             }
