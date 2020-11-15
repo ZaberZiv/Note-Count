@@ -12,7 +12,6 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.zivapp.notes.R;
 import com.zivapp.notes.model.GroupNote;
-import com.zivapp.notes.views.groupnotes.GroupNoteActivity;
 import com.zivapp.notes.views.mainmenu.MenuNotesActivity;
 
 public class AppNotifications {

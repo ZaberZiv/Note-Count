@@ -1,32 +1,19 @@
 package com.zivapp.notes.adapters;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.zivapp.notes.R;
-import com.zivapp.notes.databinding.ItemGroupMembersBinding;
 import com.zivapp.notes.databinding.ItemGroupMenuBinding;
-import com.zivapp.notes.databinding.ItemGroupNoteBinding;
 import com.zivapp.notes.databinding.ItemMainMenuBinding;
-import com.zivapp.notes.firebase.FirebaseHelper;
 import com.zivapp.notes.model.FormatSum;
-import com.zivapp.notes.model.GroupNote;
 import com.zivapp.notes.model.MainMenuNote;
 import com.zivapp.notes.model.Note;
-import com.zivapp.notes.util.UtilConverter;
-import com.zivapp.notes.views.groupnotes.GroupNoteActivity;
-import com.zivapp.notes.views.notes.NoteActivity;
 import com.zivapp.notes.views.mainmenu.MenuNotesActivity;
 
 import java.util.ArrayList;

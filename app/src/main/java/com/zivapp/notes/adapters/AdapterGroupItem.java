@@ -2,33 +2,24 @@ package com.zivapp.notes.adapters;
 
 import android.app.Activity;
 import android.content.DialogInterface;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.cardview.widget.CardView;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.zivapp.notes.R;
 import com.zivapp.notes.databinding.ItemGroupMembersBinding;
 import com.zivapp.notes.firebase.FirebaseHelper;
 import com.zivapp.notes.model.GroupNote;
 import com.zivapp.notes.databinding.ItemGroupNoteBinding;
 import com.zivapp.notes.model.FormatSum;
-import com.zivapp.notes.model.User;
 import com.zivapp.notes.util.UtilConverter;
-import com.zivapp.notes.util.UtilDate;
 import com.zivapp.notes.views.groupnotes.GroupContract;
 import com.zivapp.notes.views.groupnotes.GroupNoteActivity;
 

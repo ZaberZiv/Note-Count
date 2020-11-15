@@ -21,7 +21,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseUser;
 import com.zivapp.notes.databinding.FragmentRegisterBinding;
-import com.zivapp.notes.model.User;
 import com.zivapp.notes.views.userinfo.ProfileActivity;
 
 public class RegisterFragment extends Fragment {
@@ -118,7 +117,6 @@ public class RegisterFragment extends Fragment {
         Intent intent = new Intent(getActivity(), ProfileActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra("key", UID);
-        intent.putExtra("email", email);
         startActivity(intent);
     }
 
