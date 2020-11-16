@@ -79,7 +79,7 @@ public class GroupPresenter implements GroupContract.Firebase, GroupContract.Ada
 
     private void setReferences(String id) {
         mNotesReference = mFirebaseHelper.getGroupNoteReference(id);
-        mTotalDataReference = mFirebaseHelper.getGroupTotalDataReference(id);
+        mTotalDataReference = mFirebaseHelper.getTotalDataRefCurrentNote(id);
         mMembersReference = mFirebaseHelper.getGroupMembersDataReference(id);
 
         mNotesReference.keepSynced(true);
@@ -95,10 +95,9 @@ public class GroupPresenter implements GroupContract.Firebase, GroupContract.Ada
      */
     private String checkID() {
         Bundle arguments = activity.getIntent().getExtras();
-        String uID;
+        String uID = arguments.getString("id_note");
 
-        if (arguments != null) {// if exist in database
-            uID = arguments.getString("id_note");
+        if (uID != null) {// if exist in database
             Log.v(TAG, "This note is already exist! ID: " + uID);
 
             setReferences(uID);

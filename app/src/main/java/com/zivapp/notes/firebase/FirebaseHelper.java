@@ -14,12 +14,13 @@ public class FirebaseHelper {
 
     private static final String TAG = "FirebaseHelper";
 
-    private static final String USERS = "users";
-    private static final String GROUPS = "Groups";
+    private static final String USERS = "Users";
     private static final String NOTES = "Notes";
     private static final String TOTAL_DATA = "Total Data";
-    private static final String MEMBERS = "members";
-    private static final String GROUP = "Group";
+    private static final String GROUPS = "Groups";
+    private static final String GROUPS_MESSAGES = "messages";
+    private static final String GROUPS_MEMBERS = "members";
+    private static final String USER_GROUP = "group";
     private static final String USER_NAME = "name";
     private static final String USER_EMAIL = "email";
     private static final String USER_PHONE = "phone";
@@ -75,7 +76,7 @@ public class FirebaseHelper {
     }
     // Saving data of current user to the branch "Total Data" -> note id -> data
     public void saveTotalDataCurrentUser(String id, MainMenuNote mainMenuNote) {
-        getTotalDataRefCurrentUser().child(id).setValue(mainMenuNote);
+        getTotalDataRefCurrentNote(id).setValue(mainMenuNote);
     }
     // Saving data of members to the branch "Total Data" -> member id -> note id -> data
     public void saveTotalDataMembers(String uID, String childID, MainMenuNote mainMenuNote) {
@@ -92,25 +93,21 @@ public class FirebaseHelper {
     public DatabaseReference getGroupReferenceByID(String id) {
        return getGroupsReference().child(id);
     }
-    // Get "Notes" from "Groups" -> group id -> "Notes"
+    // Get "Notes" from "Groups" -> group id -> "messages"
     public DatabaseReference getGroupNoteReference(String id) {
-      return getGroupReferenceByID(id).child(NOTES);
-    }
-    // Get "Total Data" from "Groups" -> group id -> "Total Data"
-    public DatabaseReference getGroupTotalDataReference(String id) {
-        return getGroupReferenceByID(id).child(TOTAL_DATA);
+      return getGroupReferenceByID(id).child(GROUPS_MESSAGES);
     }
     // Get "members" from "Groups" -> group id -> "members"
     public DatabaseReference getGroupMembersDataReference(String id) {
-        return getGroupReferenceByID(id).child(MEMBERS);
+        return getGroupReferenceByID(id).child(GROUPS_MEMBERS);
     }
     // Get "members" from "Groups" -> group id -> "members" -> user id
     public DatabaseReference getGroupMembersReference(DatabaseReference reference, String id) {
-        return reference.child(MEMBERS).child(id);
+        return reference.child(GROUPS_MEMBERS).child(id);
     }
 
 
-    // "users" branch
+    // "Users" branch
     public DatabaseReference getUsersReference() {
         return getDatabaseReference().child(USERS);
     }
@@ -120,7 +117,7 @@ public class FirebaseHelper {
     }
 
     public DatabaseReference getUsersGroupReference(String uID) {
-       return getUsersReference().child(uID).child(GROUP);
+       return getUsersReference().child(uID).child(USER_GROUP);
     }
 
     public DatabaseReference getUserNameReference(String uID) {
@@ -154,12 +151,12 @@ public class FirebaseHelper {
                 .removeValue();
 
         getCurrentUserReferenceByID()
-                .child(GROUP)
+                .child(USER_GROUP)
                 .child(list.get(position).getId())
                 .removeValue();
 
         getGroupReferenceByID(list.get(position).getId())
-                .child(MEMBERS)
+                .child(GROUPS_MEMBERS)
                 .child(getFirebaseUser().getUid())
                 .removeValue();
     }
