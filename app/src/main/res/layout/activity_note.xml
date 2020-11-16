@@ -1,57 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <androidx.drawerlayout.widget.DrawerLayout
-        android:id="@+id/drawer_layout"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:openDrawer="start"
-        android:fitsSystemWindows="true">
+        android:background="@color/white">
 
-        <RelativeLayout
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/include_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <include
+            android:id="@+id/include_hint_message"
+            layout="@layout/include_hint_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/toolbar"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="12dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_creation"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white">
+            android:layout_above="@+id/include_interface"
+            android:layout_below="@+id/include_hint_message" />
 
-            <include
-                android:id="@+id/toolbar"
-                layout="@layout/include_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <include
-                android:id="@+id/include_hint_message"
-                layout="@layout/include_hint_message"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/toolbar"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="12dp" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_creation"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_above="@+id/include_interface"
-                android:layout_below="@+id/include_hint_message" />
-
-            <include
-                android:id="@+id/include_interface"
-                layout="@layout/include_interface"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true" />
-        </RelativeLayout>
-
-        <com.google.android.material.navigation.NavigationView
-            android:id="@+id/nav_view"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:fitsSystemWindows="true"
-            app:headerLayout="@layout/drawer_nav_header" />
-    </androidx.drawerlayout.widget.DrawerLayout>
+        <include
+            android:id="@+id/include_interface"
+            layout="@layout/include_interface"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true" />
+    </RelativeLayout>
 </layout>
