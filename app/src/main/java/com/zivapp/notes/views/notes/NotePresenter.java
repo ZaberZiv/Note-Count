@@ -30,9 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * A ViewModel used for the {@link NoteActivity}.
- */
 public class NotePresenter implements NoteContract.Firebase {
     private static final String TAG = "NotePresenter";
 

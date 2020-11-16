@@ -22,9 +22,6 @@ import com.zivapp.notes.views.notes.NoteActivity;
 
 import java.util.ArrayList;
 
-/**
- * A ViewModel used for the {@link MenuNotesActivity}.
- */
 public class MenuPresenter implements MenuContract.Firebase, MenuContract.Presenter {
     private static final String TAG = "MenuPresenter";
 
