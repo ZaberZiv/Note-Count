@@ -20,7 +20,6 @@ public class FirebaseHelper {
     private static final String GROUPS = "Groups";
     private static final String GROUPS_MESSAGES = "messages";
     private static final String GROUPS_MEMBERS = "members";
-    private static final String USER_GROUP = "group";
     private static final String USER_NAME = "name";
     private static final String USER_EMAIL = "email";
     private static final String USER_PHONE = "phone";
@@ -115,11 +114,6 @@ public class FirebaseHelper {
     public DatabaseReference getCurrentUserReferenceByID() {
         return getUsersReference().child(getFirebaseUser().getUid());
     }
-
-    public DatabaseReference getUsersGroupReference(String uID) {
-       return getUsersReference().child(uID).child(USER_GROUP);
-    }
-
     public DatabaseReference getUserNameReference(String uID) {
         return getUsersReference().child(uID).child(USER_NAME);
     }
@@ -136,7 +130,7 @@ public class FirebaseHelper {
      */
     // Removing data from Firebase in MenuNotesActivity
     public void deleteMenuNoteFromFirebase(ArrayList<MainMenuNote> list, int position) {
-        getTotalDataReferenceByID(getFirebaseUser().getUid())
+        getTotalDataRefCurrentUser()
                 .child(list.get(position).getId())
                 .removeValue();
 
@@ -147,11 +141,6 @@ public class FirebaseHelper {
     // Removing Group data from Firebase in MenuNotesActivity
     public void deleteGroupNoteFromFirebase(ArrayList<MainMenuNote> list, int position) {
         getTotalDataRefCurrentUser()
-                .child(list.get(position).getId())
-                .removeValue();
-
-        getCurrentUserReferenceByID()
-                .child(USER_GROUP)
                 .child(list.get(position).getId())
                 .removeValue();
 

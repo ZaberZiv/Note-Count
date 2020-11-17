@@ -132,17 +132,10 @@ public class ContactsPresenter implements SelectedUsersListener {
                     // adding users to the Group | "Groups" -> group id -> "members" -> member uID -> value (false - for group members)
                     mFirebaseHelper.getGroupMembersReference(mGroupIDReference, user.getId()).setValue(false);
                     Log.v(TAG, "User: " + user.getName() + ", id: " + user.getId());
-                    // adding group key to the members
-                    // "users" -> member uID -> "Group" -> group key -> value (false - for group members)
-                    getReferenceUserGroup(user.getId()).child(getGroupKey()).setValue(false);
-                    Log.v(TAG, "mGroupIDReference KEY: " + getGroupKey());
                 }
 
-                String key = getGroupKey();
-                // adding group key to the current user
-                // "users" -> user uID -> "Group" -> group key -> value (true)
-                mUserReference.child(key).setValue(true);
-                openNewActivityWithData(key);
+                Log.v(TAG, "mGroupIDReference KEY: " + getGroupKey());
+                openNewActivityWithData(getGroupKey());
             }
         });
     }
@@ -153,18 +146,12 @@ public class ContactsPresenter implements SelectedUsersListener {
         mGroupIDReference = mFirebaseHelper.getGroupsReference().push();
         // add current user to the members root | "Groups" -> group id -> "members" -> user uID -> value (true - for group leader)
         mFirebaseHelper.getGroupMembersReference(mGroupIDReference, user.getUid()).setValue(true);
-        // reference to current user
-        mUserReference = getReferenceUserGroup(user.getUid());
+
         Log.v(TAG, "firebase() worked");
     }
 
     private String getGroupKey() {
         return mGroupIDReference.getKey();
-    }
-
-    // "users" -> user uID -> "Group"
-    private DatabaseReference getReferenceUserGroup(String uID) {
-        return mFirebaseHelper.getUsersGroupReference(uID);
     }
 
     private void openNewActivityWithData(String key) {
@@ -177,7 +164,7 @@ public class ContactsPresenter implements SelectedUsersListener {
         mBinding.refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-
+                Log.v(TAG, "Page Refreshed");
                 mFirebaseUsersList = getDataFromFirebase(mAllUsersReference);
                 updateUI(findMatchedUsers(mContactsList, mFirebaseUsersList));
 
