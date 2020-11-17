@@ -18,7 +18,6 @@ Screenshots of application:
 
 ![Image alt](https://github.com/ZaberZiv/Note-Count/blob/main/screenshots/Screenshot_2.jpg)
 ![Image alt](https://github.com/ZaberZiv/Note-Count/blob/main/screenshots/Screenshot_3.jpg)
-
 ![Image alt](https://github.com/ZaberZiv/Note-Count/blob/main/screenshots/Screenshot_4.jpg)
 
 
