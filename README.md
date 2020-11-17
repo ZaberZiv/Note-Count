@@ -12,10 +12,10 @@ Structure of data in firebase:
 ![Image alt](https://github.com/ZaberZiv/Note-Count/blob/main/screenshots/Screenshot_1.png)
 
 Screenshots of application:
-![Image alt](https://github.com/ZaberZiv/Note-Count/blob/main/screenshots/Screenshot_2.png)
-![Image alt](https://github.com/ZaberZiv/Note-Count/blob/main/screenshots/Screenshot_3.png)
-![Image alt](https://github.com/ZaberZiv/Note-Count/blob/main/screenshots/Screenshot_4.png)
+![Image alt](https://github.com/ZaberZiv/Note-Count/blob/main/screenshots/Screenshot_2.jpg)
+![Image alt](https://github.com/ZaberZiv/Note-Count/blob/main/screenshots/Screenshot_3.jpg)
+![Image alt](https://github.com/ZaberZiv/Note-Count/blob/main/screenshots/Screenshot_4.jpg)
 
 
-![Image alt](https://github.com/ZaberZiv/Note-Count/blob/main/screenshots/Screenshot_5.png)
-![Image alt](https://github.com/ZaberZiv/Note-Count/blob/main/screenshots/Screenshot_6.png)
+![Image alt](https://github.com/ZaberZiv/Note-Count/blob/main/screenshots/Screenshot_5.jpg)
+![Image alt](https://github.com/ZaberZiv/Note-Count/blob/main/screenshots/Screenshot_6.jpg)
