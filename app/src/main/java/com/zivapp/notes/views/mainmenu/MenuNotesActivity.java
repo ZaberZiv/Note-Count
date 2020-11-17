@@ -38,6 +38,8 @@ public class MenuNotesActivity extends AppCompatActivity {
     public void signOutButton(MenuItem item) {
         Log.v(TAG, "User signed out!");
         FirebaseAuth.getInstance().signOut();
-        startActivity(new Intent(MenuNotesActivity.this, LoginActivity.class));
+        Intent intent = new Intent(MenuNotesActivity.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 }
