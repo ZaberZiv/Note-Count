@@ -1,8 +1,8 @@
 My third application
 
-App for notes and expense tracking.
+App for notes and expense tracking with the option to create group notes (multiple users).
 
-It works with Firebase:
+It works with [Firebase] (../tree/main/app/src/main/java/com/zivapp/notes/firebase):
 - Auth
 - Realtime Database
 
