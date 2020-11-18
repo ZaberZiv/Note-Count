@@ -6,7 +6,7 @@ It works with [Firebase](https://github.com/ZaberZiv/Note-Count/tree/main/app/sr
 - Auth
 - Realtime Database
 
-App works with/withot internet (the local data is synchronizesв with firebase cloud after the connection is restored)
+App works with/withot internet (the local data is synchronizes with firebase cloud after the connection is restored)
 
 Structure of data in firebase:
 
