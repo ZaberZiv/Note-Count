@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.RelativeLayout;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
@@ -177,9 +179,13 @@ public class ContactsPresenter implements SelectedUsersListener {
     @Override
     public void onSelectedAction(Boolean isSelected) {
         if (isSelected) {
-            mBinding.btnAddContacts.setTranslationY(-50);
+            showOrHideButton(-1, 300);
         } else {
-            mBinding.btnAddContacts.setTranslationY(50);
+            showOrHideButton(150, 300);
         }
+    }
+
+    private void showOrHideButton(int translationY, int duration) {
+        mBinding.btnAddContacts.animate().translationY(translationY).setDuration(duration);
     }
 }

@@ -21,9 +21,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
+            android:translationY="50dp"
             android:background="@color/colorAccent"
-            android:text="@string/btn_add"
-            android:translationY="50dp" />
+            android:text="@string/btn_add" />
 
         <LinearLayout
             android:id="@+id/no_friends_layout"
@@ -31,14 +31,14 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:gravity="center_horizontal"
-            android:visibility="gone"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_baseline_adb_24"
-                android:contentDescription="@string/image_descr_no_contacts" />
+                android:contentDescription="@string/image_descr_no_contacts"
+                android:src="@drawable/ic_baseline_adb_24" />
 
             <TextView
                 android:layout_width="wrap_content"
