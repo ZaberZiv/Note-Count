@@ -18,6 +18,8 @@
     <string name="hint_price">Add price</string>
     <string name="hint_message">Some hints for this note</string>
 
+    <string name="btn_sign_in">Go</string>
+    <string name="btn_register">Register</string>
     <string name="btn_add">Add</string>
     <string name="btn_group_note">Group note</string>
     <string name="btn_note">Note</string>
@@ -50,5 +52,10 @@
     <string name="welcome">"Welcome!"</string>
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
+
+    <string name="login_title">SIGN</string>
+    <string name="login_sign_in">IN</string>
+    <string name="login_sign_up">UP</string>
+    <string name="login_separate">/</string>
     <string name="login_failed">"Login failed"</string>
 </resources>

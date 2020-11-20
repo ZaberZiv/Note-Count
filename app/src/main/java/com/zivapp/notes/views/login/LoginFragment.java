@@ -2,6 +2,8 @@ package com.zivapp.notes.views.login;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +37,7 @@ public class LoginFragment extends Fragment {
         mLoginPresenter = new LoginPresenter();
 
         setSignInButton();
+        editTextListener();
         return mBinding.getRoot();
     }
 
@@ -88,5 +91,31 @@ public class LoginFragment extends Fragment {
 
     private void hideProgressBar() {
         mBinding.loading.setVisibility(View.GONE);
+    }
+
+    private void editTextListener() {
+        TextWatcher afterTextChangedListener = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // ignore
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // ignore
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!mBinding.userEmail.getText().toString().trim().equals("") &&
+                !mBinding.password.getText().toString().trim().equals("")) {
+
+                    mBinding.loginBtn.setEnabled(true);
+                } else {
+                    mBinding.loginBtn.setEnabled(false);
+                }
+            }
+        };
+        mBinding.password.addTextChangedListener(afterTextChangedListener);
     }
 }
