@@ -3,6 +3,7 @@ package com.zivapp.notes.views.login;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.animation.ValueAnimator;
 import android.os.Bundle;
@@ -33,24 +34,33 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.sign_in_btn:
-                animateTextSize(mBinding.signInBtn, 28, 42);
-                animateTextSize(mBinding.registerBtn, 42, 28);
+                animateTextSize(mBinding.signInBtn, 38, 42);
+                animateTextSize(mBinding.registerBtn, 42, 38);
+                mBinding.registerBtn.setTextColor(getResources().getColor(R.color.grey));
+                mBinding.signInBtn.setTextColor(getResources().getColor(R.color.colorAccent));
+
                 setFragment(new LoginFragment());
                 break;
             case R.id.register_btn:
-                animateTextSize(mBinding.signInBtn, 42, 28);
-                animateTextSize(mBinding.registerBtn, 28, 42);
+                animateTextSize(mBinding.signInBtn, 42, 38);
+                animateTextSize(mBinding.registerBtn, 38, 42);
+                mBinding.signInBtn.setTextColor(getResources().getColor(R.color.grey));
+                mBinding.registerBtn.setTextColor(getResources().getColor(R.color.colorAccent));
+
                 setFragment(new RegisterFragment());
         }
     }
 
     private void setFragment(Fragment fragment) {
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                fragment).commit();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(R.anim.enter_right_to_left, R.anim.exit_left_to_right)
+                .replace(R.id.fragment_container, fragment)
+                .commit();
     }
 
     private void animateTextSize(final TextView tv, float startSize, float endSize) {
-        long animationDuration = 600; // Animation duration in ms
+        long animationDuration = 300; // Animation duration in ms
 
         ValueAnimator animator = ValueAnimator.ofFloat(startSize, endSize);
         animator.setDuration(animationDuration);
