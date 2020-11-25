@@ -23,7 +23,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:elevation="12dp"
-            app:cardBackgroundColor="@color/grey">
+            app:cardBackgroundColor="@color/white">
+
+            <FrameLayout
+                android:id="@+id/frame_color"
+                android:layout_width="6dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="4dp"
+                android:background="@color/item_main_menu_group" />
 
             <RelativeLayout
                 android:layout_width="match_parent"

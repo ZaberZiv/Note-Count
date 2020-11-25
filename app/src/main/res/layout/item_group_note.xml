@@ -25,6 +25,13 @@
             android:elevation="12dp"
             app:cardBackgroundColor="@color/white">
 
+            <FrameLayout
+                android:id="@+id/frame_color"
+                android:layout_width="6dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="4dp"
+                android:background="@color/item_main_menu_note" />
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -69,14 +76,6 @@
                         android:gravity="center_vertical"
                         android:text="@{note.message}" />
 
-                    <!--                    android:autofillHints="no"-->
-                    <!--                    android:enabled="false"-->
-                    <!--                    android:gravity="start"-->
-                    <!--                    android:hint="@string/hint_message"-->
-                    <!--                    android:inputType="text|textMultiLine|textCapSentences"-->
-                    <!--                    android:maxLength="100"-->
-                    <!--                    android:maxLines="5"-->
-
                     <TextView
                         android:id="@+id/et_price_operation"
                         style="@style/text_item_style"
@@ -87,13 +86,6 @@
                         android:layout_weight="2"
                         android:gravity="center_vertical"
                         android:text="@{format.converted_sum}" />
-
-                    <!--                    android:autofillHints="no"-->
-                    <!--                    android:enabled="false"-->
-                    <!--                    android:gravity="start"-->
-                    <!--                    android:hint="@string/hint_message"-->
-                    <!--                    android:inputType="number"-->
-                    <!--                    android:maxLength="9"-->
 
                 </LinearLayout>
             </RelativeLayout>

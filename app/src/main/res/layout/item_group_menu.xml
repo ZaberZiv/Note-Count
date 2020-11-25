@@ -24,7 +24,7 @@
         android:layout_margin="8dp"
         android:elevation="5dp"
         android:foregroundGravity="center"
-        app:cardBackgroundColor="@color/item_color"
+        app:cardBackgroundColor="@color/item_main_menu_group"
         app:cardCornerRadius="20dp">
 
         <RelativeLayout

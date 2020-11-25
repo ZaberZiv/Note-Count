@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Notes &amp; Count</string>
     <string name="app_name_contacts_list">Contacts List</string>
+    <string name="app_name_one_splash_screen">NOTE</string>
+    <string name="app_name_two_splash_screen">&amp;</string>
+    <string name="app_name_three_splash_screen">COUNT</string>
 
     <string name="total_notes">Total notes:</string>
     <string name="image_descr">Empty list of notes</string>
@@ -25,6 +28,7 @@
     <string name="btn_note">Note</string>
     <string name="btn_sign_out">Sign out</string>
     <string name="btn_share">Share</string>
+    <string name="btn_confirm">Confirm</string>
 
     <string name="dialog_title">Edit data</string>
     <string name="dialog_header">Type new data below</string>
@@ -49,13 +53,17 @@
     <string name="prompt_confirm_password">Confirm Password</string>
     <string name="action_sign_in">Sign in</string>
     <string name="action_sign_in_short">Sign in</string>
-    <string name="welcome">"Welcome!"</string>
+    <string name="welcome">Welcome!</string>
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
+    <string name="user_name">Your name</string>
+    <string name="user_phone">Your phone</string>
+    <string name="plus">+</string>
+    <string name="phone_starts">7</string>
 
     <string name="login_title">SIGN</string>
     <string name="login_sign_in">IN</string>
     <string name="login_sign_up">UP</string>
     <string name="login_separate">/</string>
-    <string name="login_failed">"Login failed"</string>
+    <string name="login_failed">Login failed</string>
 </resources>
