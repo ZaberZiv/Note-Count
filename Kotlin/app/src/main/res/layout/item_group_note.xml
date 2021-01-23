@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_view_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:elevation="12dp">
+
+            <FrameLayout
+                android:id="@+id/frame_color"
+                android:layout_width="6dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="4dp"
+                android:background="@color/item_main_menu_note" />
+
+            <include
+                android:id="@+id/include_group_chat"
+                layout="@layout/include_group_chat" />
+        </androidx.cardview.widget.CardView>
+    </RelativeLayout>
+</layout>

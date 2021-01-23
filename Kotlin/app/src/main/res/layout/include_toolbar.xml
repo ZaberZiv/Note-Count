@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="main_note"
+            type="com.zivapp.countandnote.model.MainMenuNote" />
+
+        <variable
+            name="format"
+            type="com.zivapp.countandnote.model.FormatSum" />
+    </data>
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:gravity="center_vertical"
+        app:menu="@menu/note_menu">
+
+        <LinearLayout
+            android:id="@+id/title_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/et_note_title_name"
+                style="@style/text_creation_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:autofillHints="Note name"
+                android:background="@drawable/edittext_toolbar"
+                android:hint="@string/hint_name"
+                android:inputType="textCapWords"
+                android:maxLength="20"
+                android:maxLines="2"
+                android:text="@{main_note.title}" />
+
+            <TextView
+                android:id="@+id/tv_total_sum"
+                style="@style/text_creation_style"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_weight="2"
+                android:gravity="center_vertical"
+                android:text="@{format.converted_sum}" />
+
+        </LinearLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
+</layout>
