@@ -22,7 +22,7 @@ It backend is [Firebase](https://github.com/ZaberZiv/Note-Count/tree/main/app/sr
 * Data Binding
 
 
-App works with/withot internet (the local database synchronizes with firebase cloud after the connection is restored)
+App works with/without internet (the local database synchronizes with firebase cloud after the connection is restored)
 
 Structure of data in firebase:
 
