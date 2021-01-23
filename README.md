@@ -3,7 +3,7 @@ My third application
 App for notes and expense tracking with the option to create group notes (with multiple users).
 
 
-It backend is [Firebase](https://github.com/ZaberZiv/Note-Count/tree/main/app/src/main/java/com/zivapp/notes/firebase):
+The backend is on [Firebase](https://github.com/ZaberZiv/Note-Count/tree/main/app/src/main/java/com/zivapp/notes/firebase):
 - Auth via email
 - Realtime Database
 
