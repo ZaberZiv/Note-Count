@@ -1,12 +1,28 @@
 My third application
 
-App for notes and expense tracking with the option to create group notes (multiple users).
+App for notes and expense tracking with the option to create group notes (with multiple users).
 
-It works with [Firebase](https://github.com/ZaberZiv/Note-Count/tree/main/app/src/main/java/com/zivapp/notes/firebase):
-- Auth
+
+It backend is [Firebase](https://github.com/ZaberZiv/Note-Count/tree/main/app/src/main/java/com/zivapp/notes/firebase):
+- Auth via email
 - Realtime Database
 
-App works with/withot internet (the local data is synchronizes with firebase cloud after the connection is restored)
+
+**KOTLIN**
+* MVVM
+* ViewModel
+* LiveData
+* Data Binding
+* Fragments
+
+
+**JAVA**
+* MVP
+* ViewBinding
+* Data Binding
+
+
+App works with/withot internet (the local database synchronizes with firebase cloud after the connection is restored)
 
 Structure of data in firebase:
 
